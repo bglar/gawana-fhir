@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% block head %}
+      {% block meta %}
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta name="robots" content="NONE,NOARCHIVE" />
+      {% endblock %}
+
+        <title>{% block title %}Gawana FHIR Server{% endblock %}</title>
+
+        <!-- Flashing Flask messages to the API -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="clearfix control-group">
+              <a class="close" data-dismiss="alert">×</a>
+                <ul class=flashes>
+                {% for category, message in messages %}
+                  <li class="alert alert-{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+          {% endif %}
+        {% endwith %}
+        <!-- End of Flash messaging -->
+
+      {% block style %}
+        {% block bootstrap_theme %}
+          <link rel="stylesheet" type="text/css" href="{{url_for('flask-api.static', filename='css/bootstrap.min.css')}}"/>
+          <link rel="stylesheet" type="text/css" href="{{url_for('flask-api.static', filename='css/font-awesome.min.css')}}"/>
+          <link rel="shortcut icon" href="{{ url_for('flask-api.static', filename='img/favicon-fire.ico') }}">
+          <link rel="stylesheet" type="text/css" href="{{url_for('flask-api.static', filename='css/bootstrap-tweaks.css')}}"/>
+        {% endblock %}
+        <link rel="stylesheet" type="text/css" href="{{url_for('flask-api.static', filename='css/prettify.css')}}"/>
+        <link rel="stylesheet" type="text/css" href="{{url_for('flask-api.static', filename='css/default.css')}}"/>
+      {% endblock %}
+
+    {% endblock %}
+  </head>
+  <!--<div class=metanav>-->
+    <!--{% if not session.logged_in %}-->
+    <!--<a href="">log in</a>-->
+  <!--{% else %}-->
+    <!--<a href="">log out</a>-->
+  <!--{% endif %}-->
+  <!--</div>-->
+  <!--{% for message in get_flashed_messages() %}-->
+    <!--<div class=flash>{{ message }}</div>-->
+  <!--{% endfor %}-->
+
+  {% block body %}
+  <body class="{% block bodyclass %}{% endblock %} container">
+
+    <div class="wrapper">
+
+    {% block navbar %}
+    <div class="navbar {% block bootstrap_navbar_variant %}navbar-inverse{% endblock %}">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <span href="/">
+            {% block branding %}<a class='brand' rel="nofollow" href='/'>
+            <span class="fa fa-server fa-lg" aria-hidden="true"></span>&nbsp;Gawana FHIR Server (STU3 FHIR)</a>{% endblock %}
+          </span>
+          <ul class="nav pull-right">
+            <li><a href="https://github.com/savannahinformatics/gawana_fhir_server"><span class="fa fa-github fa-lg"></span>&nbsp;Source Code</a></li>
+            <li><a href="http://fhir-server.readthedocs.io/en/latest/"><span class="fa fa-book fa-lg"></span>&nbsp;Documentation</a></li>
+
+            {% block userlinks %}
+                {% if session.user %}
+                  <li><a href="/signout/"><span class="fa fa-sign-out fa-lg"></span>&nbsp;Logout</a></li>
+                {% else %}
+                  <li><a href="/signin/"><span class="fa fa-sign-in fa-lg"></span>&nbsp;Login</a></li>
+                {% endif %}
+            {% endblock %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+
+    <div style="height: 50px"></div>
+
+    <!-- Content -->
+    <div id="content">
+
+        {% if 'GET' in allowed_methods %}
+            <form id="get-form" class="pull-right">
+                <fieldset>
+                    <div class="btn-group format-selection">
+                        <a class="btn btn-info js-tooltip" href='{{ request.get_full_path }}' rel="nofollow" title="Make a GET request on the {{ name }} resource">GET</a>
+
+                        <!--<button class="btn btn-info dropdown-toggle js-tooltip" data-toggle="dropdown" title="Specify a format for the GET request">-->
+                            <!--<span class="caret"></span>-->
+                        <!--</button>-->
+                        <!--<ul class="dropdown-menu">-->
+                            <!--{% for format in available_formats %}-->
+                                <!--<li>-->
+                                    <!--<a class="js-tooltip format-option" href='&lt;!&ndash; add_query_param request api_settings.URL_FORMAT_OVERRIDE format &ndash;&gt;' rel="nofollow" title="Make a GET request on the {{ name }} resource with the format set to `{{ format }}`">{{ format }}</a>-->
+                                <!--</li>-->
+                            <!--{% endfor %}-->
+                        <!--</ul>-->
+                    </div>
+
+                </fieldset>
+            </form>
+        {% endif %}
+
+        {% if 'DELETE' in allowed_methods %}
+            <form class="button-form" action="{{ request.full_path }}" method="POST" class="pull-right">
+                <!-- csrf_token -->
+                <input type="hidden" name="_method" value="DELETE" />
+                <button class="btn btn-danger js-tooltip" title="Make a DELETE request on the resource">DELETE</button>
+            </form>
+        {% endif %}
+
+        <div class="content-main">
+            <div class="page-header"><h1>{{ view_name }}</h1></div>
+            {% if view_description %}<div style="margin-top: -10px; margin-bottom: 10px">{{ view_description|safe }}</div>{% endif %}
+            <div class="request-info" style="clear: both" >
+                <pre class="prettyprint"><b>{{ request.method }}</b> {{ request.full_path }}</pre>
+            </div>
+            <div class="response-info">
+                <pre class="prettyprint"><div class="meta nocode"><b>HTTP {{ status }}</b>{% autoescape off %}
+{% for key, val in headers.items() %}<b>{{ key }}:</b> <span class="lit">{{ val|e }}<!--{ val|break_long_headers|urlize_quoted_links }--></span>
+{% endfor %}
+</div>{% if content %}{{ content|urlize_quoted_links }}{% endif %}<!-- |urlize_quoted_links --></pre>{% endautoescape %}
+            </div>
+        </div>
+
+
+                {% if 'POST' in allowed_methods or 'PUT' in allowed_methods or 'PATCH' in allowed_methods %}
+                <div>
+                    <div class="well">
+                        <div id="generic-content-form">
+                            <form action="{{ request.full_path }}" method="POST" class="form-horizontal">
+                                <fieldset>
+<div class="control-group">
+        <label for="id__content_type" class="control-label">Media type:</label>
+        <div class="controls">
+            <select id="id__content_type" name="_content_type">
+<option value="application/json" selected="selected">application/json</option>
+<option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option>
+<option value="multipart/form-data">multipart/form-data</option>
+</select>
+            <span class="help-block"></span>
+        </div>
+    </div>
+                                <div class="control-group">
+                                    <label for="id__content" class="control-label">Content:</label>
+                                    <div class="controls">
+                                        <textarea name="_content" cols="40" rows="10"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    {% if 'POST' in allowed_methods %}
+                                    <button class="btn btn-info" title="Make a POST request on the resource">POST</button>
+                                    {% endif %}
+                                    {% if 'PUT' in allowed_methods %}
+                                    <button class="btn btn-info js-tooltip" name="_method" value="PUT" title="Make a PUT request on the resource">PUT</button>
+                                    {% endif %}
+                                    {% if 'PATCH' in allowed_methods %}
+                                    <button class="btn btn-info js-tooltip" name="_method" value="PATCH" title="Make a PATCH request on the resource">PATCH</button>
+                                    {% endif %}
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+        </div>
+        <!-- END content-main -->
+
+    </div>
+    <!-- END Content -->
+
+        <div id="push"></div>
+
+    </div>
+
+    </div><!-- ./wrapper -->
+
+    {% block footer %}
+    {% endblock %}
+
+    {% block script %}
+    <script src="{{url_for('flask-api.static', filename='js/jquery-1.8.1-min.js')}}"></script>
+    <script src="{{url_for('flask-api.static', filename='js/bootstrap.min.js')}}"></script>
+    <script src="{{url_for('flask-api.static', filename='js/prettify-min.js')}}"></script>
+    <script src="{{url_for('flask-api.static', filename='js/default.js')}}"></script>
+    {% endblock %}
+  </body>
+{% endblock %}
+</html>

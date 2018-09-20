@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block body %}
+<body class="container">
+  <div class="container-fluid" style="margin-top: 30px">
+    <div class="row-fluid">
+      <div class="well" style="width: 320px; margin-left: auto; margin-right: auto">
+        <div class="row-fluid">
+          <div>
+            {% block branding %}
+              <h3 style="margin: 0 0 20px; color:#0390b2;">
+                <span class="fa fa-server fa-lg" aria-hidden="true"></span>&nbsp;Gawana FHIR Server
+              </h3>{% endblock %}
+          </div>
+        </div><!-- /row fluid -->
+
+        <div class="row-fluid">
+          <div>
+            <form class="form-horizontal" action="{{ request.full_path }}" role="form" method="POST">
+              <input type="hidden" name="next" value="{{ next }}" />
+
+              <div id="div_id_username" class="clearfix control-group">
+                <div class="form-group">
+                  <input type="text" name="username" maxlength="100" placeholder="Username"
+                    autocapitalize="off"
+                    autocorrect="off" class="form-control textinput textInput"
+                    id="id_username" required autofocus>
+                </div>
+              </div>
+             <div id="div_id_fname" class="clearfix control-group">
+                <div class="form-group">
+                  <input type="text" name="fname" maxlength="100" placeholder="First Name"
+                    autocapitalize="off"
+                    autocorrect="off" class="form-control textinput textInput"
+                    id="id_fname" required autofocus>
+                </div>
+              </div>
+             <div id="div_id_lname" class="clearfix control-group">
+                <div class="form-group">
+                  <input type="text" name="lname" maxlength="100" placeholder="Last Name"
+                    autocapitalize="off"
+                    autocorrect="off" class="form-control textinput textInput"
+                    id="id_lname" required autofocus>
+                </div>
+              </div>
+             <div id="div_id_email" class="clearfix control-group">
+                <div class="form-group">
+                  <input type="text" name="email" maxlength="100" placeholder="Email"
+                    autocapitalize="off"
+                    autocorrect="off" class="form-control textinput textInput"
+                    id="id_email" required autofocus>
+                </div>
+              </div>
+              <div id="div_id_password" class="clearfix control-group">
+                <div class="form-group">
+                  <input type="password" name="password" maxlength="100" placeholder="Password"
+                     autocapitalize="off"
+                     autocorrect="off" class="form-control textinput textInput"
+                     id="id_password" required>
+                </div>
+              </div>
+              <div id="div_id_password_confirm" class="clearfix control-group">
+                <div class="form-group">
+                  <input type="password" name="password_confirm" maxlength="100" placeholder="Confirm Password"
+                     autocapitalize="off"
+                     autocorrect="off" class="form-control textinput textInput"
+                     id="id_password_confirm" required>
+                </div>
+              </div>
+
+              {% if msg %}
+                <div class="clearfix control-group alert alert-error">
+                  <p><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;{{ msg }}</p>
+                </div>
+              {% endif %}
+
+              <div class="form-actions-no-box">
+                <input type="submit" name="submit" value="Sign Up"
+                       class="btn btn-info form-control"
+                       id="submit-id-submit" maxlength="50">
+
+                <a class="btn btn-default" href="/signin/" role="button">I am already registered</a>
+              </div>
+            </form>
+          </div>
+        </div><!-- /.row-fluid -->
+      </div><!--/.well-->
+    </div><!-- /.row-fluid -->
+  </div><!-- /.container-fluid -->
+</body>
+{% endblock %}

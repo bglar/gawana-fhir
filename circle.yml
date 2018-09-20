@@ -1,0 +1,28 @@
+machine:
+  python:
+    version: '3.5.1'
+
+  environment:
+    DATABASE_URL: postgres://ubuntu:@127.0.0.1:5432/circle_test
+
+checkout:
+  post:
+    - git submodule sync
+    - git submodule update --init --recursive
+
+dependencies:
+  pre:
+    - sudo apt-get update
+    - sudo apt-get install python3-all-dev
+    - sudo apt-get install liburiparser-dev
+    - sudo apt-get install postgresql-server-dev-9.4
+    - cd lib/pguri && make && sudo make install
+    - psql -d postgres://ubuntu:@127.0.0.1:5432/circle_test -f ${HOME}/${CIRCLE_PROJECT_REPONAME}/fhir_server/elements/base/pg_types.sql
+
+test:
+  override:
+    - tox:
+        environment:
+          TEST_DATABASE_URL: postgres://ubuntu:@127.0.0.1:5432/circle_test
+          APP_SETTINGS: fhir_server.configs.base.DevelopmentConfig
+          TEST_SETTINGS: fhir_server.configs.base.TestingConfig

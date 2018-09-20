@@ -1,0 +1,1 @@
+from .resource_profile_manager import ResourceProfile

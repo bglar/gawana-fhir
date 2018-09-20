@@ -1,0 +1,4 @@
+-r base.txt
+
+ipython>=4.2.1
+Fabric3==1.11.1.post1
