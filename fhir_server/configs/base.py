@@ -21,7 +21,7 @@ class BaseConfig(object):
 
 
 class DefaultConfig(BaseConfig):
-    SITE_NAME = "SilFhirServer"
+    SITE_NAME = "GawanaFhirServer"
 
     TESTING = False
     CSRF_ENABLED = True

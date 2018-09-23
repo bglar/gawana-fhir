@@ -29,12 +29,12 @@ is required to do.:
     import resources / Mixins etc
 
     @ResourceDef(name = "Organization")
-    class SilOrganization(Organization):
+    class GawanaOrganization(Organization):
 
         /* *****************************
          * Fields
          * *****************************/
-        class EmergencyContact(BaseIdentifiableElement, SilExtension):
+        class EmergencyContact(BaseIdentifiableElement, GawanaExtension):
             /**
              * This is a primitive datatype extension
              */
@@ -73,11 +73,11 @@ is required to do.:
          * Here the idea is that the method will pass an instance of itself to the
          * Extention definition Mixin.
          */
-        Extension(<<this SilOrganization instance>>)
+        Extension(<<this GawanaOrganization instance>>)
 
 
 The code snippet above shows a simple class definition of the new resources to be
-created and the base fhir resource to be extended. In this case a  *SilOrganization*
+created and the base fhir resource to be extended. In this case a  *GawanaOrganization*
 extends *Organization*.
 
 A decorator here (@ResourceDef) is also used to show that this is a resource definition.
@@ -88,7 +88,7 @@ would denote extending a given field.
    :linenos:
 
    @ResourceDef(name = "Organization")
-   class SilOrganization(Organization):
+   class GawanaOrganization(Organization):
 
         new org_field_params = {
             description: {
@@ -117,7 +117,7 @@ The example below shows the ideal case for adding some of these classes to a res
 .. code-block:: python
    :linenos:
 
-    class SilOrganisationProviders(ResourceProvider):
+    class GawanaOrganisationProviders(ResourceProvider):
 
         @Get
         def get(IdParam, ...):

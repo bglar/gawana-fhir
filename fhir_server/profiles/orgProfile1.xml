@@ -7,10 +7,10 @@
   <extension url="http://hl7.org/fhir/StructureDefinition/structuredefinition-fmm">
     <valueInteger value="4" />
   </extension>
-  <url value="StructureDefinition/SilOrganization" />
+  <url value="StructureDefinition/GawanaOrganization" />
   <version value="1.0.0" />
-  <name value="SilOrganization" />
-  <display value="Sil Org" />
+  <name value="GawanaOrganization" />
+  <display value="Gawana Org" />
   <status value="active" />
   <experimental value="true" />
   <publisher value="Savannah Informatics Limited" />

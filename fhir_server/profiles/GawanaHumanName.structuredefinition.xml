@@ -4,9 +4,9 @@
   <meta>
     <lastUpdated value="2016-07-01T08:01:10.984+03:00" />
   </meta>
-  <url value="StructureDefinition/SilHumanName" />
+  <url value="StructureDefinition/GawanaHumanName" />
   <version value="0.3" />
-  <name value="SilHumanName" />
+  <name value="GawanaHumanName" />
   <status value="draft" />
   <publisher value="Savannah Informatics Limited" />
   <date value="2016-07-14T00:00:00+03:00" />
