@@ -1,7 +1,7 @@
 import uuid
 import pytest
 
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.exc import StatementError
 from sqlalchemy import Column
 from fhir_server.elements import primitives
 
@@ -31,28 +31,6 @@ class TestBooleanField(object):
         get_data = session.query(TestDataTypesModel).all()
         assert post_data in get_data
 
-    def test_accept_Y_value(self, session, TestDataTypesModel):
-        post_data = TestDataTypesModel(
-            id=str(uuid.uuid4()),
-            bool_field='Y'
-        )
-        session.add(post_data)
-        session.commit()
-
-        get_data = session.query(TestDataTypesModel).all()
-        assert post_data in get_data
-
-    def test_accept_N_value(self, session, TestDataTypesModel):
-        post_data = TestDataTypesModel(
-            id=str(uuid.uuid4()),
-            bool_field='N'
-        )
-        session.add(post_data)
-        session.commit()
-
-        get_data = session.query(TestDataTypesModel).all()
-        assert post_data in get_data
-
     def test_false_value(self, session, TestDataTypesModel):
         post_data = TestDataTypesModel(
             id=str(uuid.uuid4()),
@@ -70,12 +48,11 @@ class TestBooleanField(object):
             bool_field=1
         )
         session.add(post_data)
-        with pytest.raises(ProgrammingError) as excinfo:
+        with pytest.raises(StatementError) as excinfo:
             session.commit()
 
-        assert ('column "bool_field" is of type boolean but expression is '
-                'of type integer') in str(excinfo.value)
-        session.close()
+        assert '1 is an invalid value for the fhir boolean field' in str(
+            excinfo.value)
 
     def test_must_not_accept_0(self, session, TestDataTypesModel):
         post_data = TestDataTypesModel(
@@ -83,8 +60,8 @@ class TestBooleanField(object):
             bool_field=0
         )
         session.add(post_data)
-        with pytest.raises(ProgrammingError) as excinfo:
+        with pytest.raises(StatementError) as excinfo:
             session.commit()
 
-        assert ('column "bool_field" is of type boolean but expression is '
-                'of type integer') in str(excinfo.value)
+        assert '0 is an invalid value for the fhir boolean field' in str(
+            excinfo.value)

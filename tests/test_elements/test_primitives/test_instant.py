@@ -81,4 +81,4 @@ class TestInstantField(object):
         session.commit()
 
         get_data = session.query(TestDataTypesModel).first()
-        assert str(get_data.instant_field) == '2011-05-24 19:25:00+00:00'
+        assert get_data.instant_field == post_data.instant_field

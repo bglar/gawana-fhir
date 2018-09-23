@@ -104,6 +104,7 @@ def test_xml_profile_manager_generates_required_constraints():
 
     assert constraints['resource'] == 'Organization'
 
+    # TODO Complete the test assertions defined below
     # data = {'cardinality': {'mini': '1', 'maxi': '1'}, 'name': 'name'}
     # assert str(data) in str(constraints)
 

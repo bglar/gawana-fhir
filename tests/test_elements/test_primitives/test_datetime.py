@@ -30,7 +30,7 @@ class TestDateTimeField(object):
             primitives.DateTimeField().process_bind_param(
                 '2011-05-24T22:00:02', 'postgres')
 
-        assert ('The DateTime 2011-05-24T22:00:02 is invalid') in str(
+        assert 'The DateTime 2011-05-24T22:00:02 is invalid' in str(
             excinfo.value)
 
     def test_time_no_seconds(self):
@@ -38,7 +38,7 @@ class TestDateTimeField(object):
             primitives.DateTimeField().process_bind_param(
                 '2011-05-24T22:00', 'postgres')
 
-        assert ('The DateTime 2011-05-24T22:00 is invalid') in str(
+        assert 'The DateTime 2011-05-24T22:00 is invalid' in str(
             excinfo.value)
 
     def test_not_allow_2400_hrs(self):
@@ -46,7 +46,7 @@ class TestDateTimeField(object):
             primitives.DateTimeField().process_bind_param(
                 '2011-05-24T24:00:00', 'postgres')
 
-        assert ('The DateTime 2011-05-24T24:00:00 is invalid') in str(
+        assert 'The DateTime 2011-05-24T24:00:00 is invalid' in str(
             excinfo.value)
 
     def test_time_with_timezone(self):
@@ -95,7 +95,7 @@ class TestDateTimeField(object):
             session.add(post_data)
             session.commit()
 
-        assert ('The DateTime Sema is invalid') in str(excinfo.value)
+        assert 'The DateTime Sema is invalid' in str(excinfo.value)
 
     def test_seconds_prefilled(self, session, TestDataTypesModel):
         id = str(uuid.uuid4())
@@ -107,7 +107,7 @@ class TestDateTimeField(object):
         session.commit()
 
         get_data = session.query(TestDataTypesModel).first()
-        assert str(get_data.date_time_field) == '2011-05-24 19:25:00+00:00'
+        assert get_data.date_time_field == post_data.date_time_field
 
     def test_validate_local_times_with_int(self):
         result = primitives.validate_local_times(1)
@@ -118,7 +118,7 @@ class TestDateTimeField(object):
 
         with pytest.raises(AmbiguousTimeError) as excinfo:
             primitives.validate_local_times(now)
-        assert ('Ambiguous Time Error') in str(excinfo.value)
+        assert 'Ambiguous Time Error' in str(excinfo.value)
 
     def test_valid_local_times_with_date_obj(self):
         now = datetime(2002, 9, 27, 1, 30, 00, 34525)

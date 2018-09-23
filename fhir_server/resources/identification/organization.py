@@ -139,6 +139,12 @@ class Organization(DomainResource):
 
         return address
 
+    @validates('contact')
+    def validates_contact(self, key, contact):
+        if contact:
+            import pdb
+            pdb.set_trace()
+
     def _resource_summary(self):
         summary_fields = ['id', 'meta', 'identifier', 'name', 'type', ]
         return {

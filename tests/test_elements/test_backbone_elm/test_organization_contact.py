@@ -156,7 +156,7 @@ class TestOrganizationContact(object):
         session.add(post)
         with pytest.raises(StatementError) as excinfo:
             session.commit()
-        assert ('The organization contact type must be defined in') in str(
+        assert 'The organization contact type must be defined in' in str(
             excinfo.value)
 
     @pytest.fixture

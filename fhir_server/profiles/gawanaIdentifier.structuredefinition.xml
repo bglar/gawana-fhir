@@ -4,9 +4,9 @@
   <meta>
     <lastUpdated value="2016-07-01T08:05:23.929+03:00" />
   </meta>
-  <url value="StructureDefinition/silIdentifier" />
+  <url value="StructureDefinition/gawanaIdentifier" />
   <version value="0.2" />
-  <name value="silIdentifier" />
+  <name value="gawanaIdentifier" />
   <status value="draft" />
   <date value="2016-07-07T00:00:00+03:00" />
   <fhirVersion value="1.0.2" />

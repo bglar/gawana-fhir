@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <StructureDefinition xmlns="http://hl7.org/fhir">
-  <id value="sil1130013900" />
+  <id value="gawana1130013900" />
   <meta>
     <lastUpdated value="2016-07-01T07:29:56.738+03:00" />
   </meta>

@@ -51,10 +51,10 @@ is required to do.:
                 name: "active"
             }
             Fields.Type = BooleanDt
-            Fileds.name = silActive
+            Fileds.name = gawanaActive
 
             // The Mixins can be overriden for custom actions
-            def setActive(BooleanDt, silActive):
+            def setActive(BooleanDt, gawanaActive):
                 ...
                 ...
                 ...

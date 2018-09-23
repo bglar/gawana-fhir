@@ -46,10 +46,23 @@ def validate_local_times(value):
                     'Ambiguous Time Error for %s' % value)
 
 
-class BooleanField(types.BOOLEAN):
+class BooleanField(types.TypeDecorator):
     """
     true or false values (0 and 1 are not valid values) and
     should cater for optional boolean fields """
+    impl = types.Boolean
+
+    def process_bind_param(self, value, dialect):
+        # Override to exclude 1s and 0s
+        if str(value) in ['1', '0']:
+            raise TypeError(
+                '{} is an invalid value for the fhir boolean field'.format(
+                    value))
+        return value
+
+    def process_result_value(self, value, dialect):
+        # Do nothing here
+        return value
 
 
 class IntegerField(types.INTEGER):
