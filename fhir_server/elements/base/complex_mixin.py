@@ -61,7 +61,7 @@ class PgComposite(CompositeType):
         for col in self.columns:
             if isinstance(col.type, PgComposite):
                 cols.append(col)
-        # CompositeValidator(self.name, cols, values)
+        CompositeValidator(self.name, cols, values)
         return values
 
     def nested_composite_array(self, column, values):

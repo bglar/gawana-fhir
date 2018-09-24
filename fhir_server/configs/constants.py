@@ -16,7 +16,7 @@ VALID_JSON_MIMETYPES = [
 
 # Add configs for swappable valueset urls
 # VALUESETS_BASE_URL = 'http://my-server-url/valuesets/'
-VALUESETS_BASE_URL = '/'
+VALUESETS_BASE_URL = 'http://127.0.0.1:5000/'
 ADDRESS_USE_URL = VALUESETS_BASE_URL + 'address_use/'
 ADDRESS_TYPE_URL = VALUESETS_BASE_URL + 'address_type/'
 QUANTITY_COMPARATOR_URL = VALUESETS_BASE_URL + 'quantity_comparator/'

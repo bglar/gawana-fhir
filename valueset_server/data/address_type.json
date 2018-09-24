@@ -1,0 +1,17 @@
+[
+    {
+      "code": "postal",
+      "display": "Postal",
+      "definition": "Mailing addresses - PO Boxes and care-of addresses."
+    },
+    {
+      "code": "physical",
+      "display": "Physical",
+      "definition": "A physical address that can be visited."
+    },
+    {
+      "code": "both",
+      "display": "Postal & Physical",
+      "definition": "An address that is both physical and postal."
+    }
+]

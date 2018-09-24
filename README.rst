@@ -88,7 +88,7 @@ Setting up project environment
 
 Clone and go to the project directory::
 
-    $ git clone git@github.com:savannahinformatics/gawana_fhir_server.git
+    $ git clone git@github.com:bglar/gawana_fhir_server.git
     $ cd path/to/project/directory/gawana_fhir_server
 
 Create a py3.5.1 virtual environment::

@@ -21,13 +21,13 @@ with open('fhir_server/__init__.py', 'rb') as f:
         f.read().decode('utf-8')).group(1)))
 
 setup(
-    name='gawana-fhir-server',
+    name='gawana-fhir',
     version=version,
     license='Gawana',
-    url='https://github.com/savannahinformatics/gawana_fhir_server/',
+    url='https://github.com/bglar/gawana-fhir/',
     author='Brian Ogollah',
-    author_email='brian.ogollah@savannahinformatics.com',
-    description='FHIR Profiling and Slicing.',
+    author_email='bogolla4@gmail.com',
+    description='Simple FHIR STU v3.0.1 Implementation',
     long_description=README,
     packages=find_packages(),
     include_package_data=True,

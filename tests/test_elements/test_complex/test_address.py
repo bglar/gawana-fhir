@@ -99,7 +99,7 @@ class TestAddress(object):
         session.add(post)
         with pytest.raises(StatementError) as excinfo:
             session.commit()
-        assert ('The address use must be defined in') in str(
+        assert 'The address use must be defined in' in str(
             excinfo.value)
 
     def test_post_data_with_type_not_in_valueset(
@@ -130,7 +130,7 @@ class TestAddress(object):
         session.add(post)
         with pytest.raises(StatementError) as excinfo:
             session.commit()
-        assert ('The address type must be defined in') in str(
+        assert 'The address type must be defined in' in str(
             excinfo.value)
 
     def test_warning_if_country_value_not_valid_alpha3_ISO1366(
@@ -233,21 +233,21 @@ class TestAddress(object):
     def test_post_data_field_city_present(self, session, TestProfiledAddress):
         post = TestProfiledAddress(
             id=1,
-            address={
-                'use': 'home',
-                'text': 'text',
-                'type': 'postal',
-                'state': 'state',
-                'postalCode': 'postal code',
-                'line': ['line1', 'line2'],
-                'district': 'district',
-                'country': 'KEN',
-                'city': 'city',
-                'period': {
-                    'start': '2011-05-24',
-                    'end': '2011-06-24'
-                }
-            }
+            # address={
+            #     'use': 'home',
+            #     'text': 'text',
+            #     'type': 'postal',
+            #     'state': 'state',
+            #     'postalCode': 'postal code',
+            #     'line': ['line1', 'line2'],
+            #     'district': 'district',
+            #     'country': 'KEN',
+            #     'city': 'city',
+            #     'period': {
+            #         'start': '2011-05-24',
+            #         'end': '2011-06-24'
+            #     }
+            # }
         )
 
         session.execute("""

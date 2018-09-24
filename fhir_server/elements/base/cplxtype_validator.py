@@ -42,10 +42,11 @@ class CompositeValidator(object):
         return method()
 
     def validate_valuesets(self, url, response):
-        data = requests.get(url)
-        if not (data.json()['count'] == 1):
+        resp = requests.get(url)
+        if not (resp.json()['count'] == 1):
             raise TypeError(
-                'The %s must be defined in %s' % (response, url))
+                'The %s must be defined in %s' % (
+                    response, url.split('?')[0]))
 
     def validate_fhir_range(self):
         if (self.values.__getattribute__('high')) and (

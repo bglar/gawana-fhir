@@ -27,7 +27,7 @@
     </telecom>
     <telecom>
       <system value="email" />
-      <value value="brian.ogollah@savannahinformatics.com" />
+      <value value="brian.ogollah@gmail.com" />
       <use value="home" />
       <period>
         <start value="2016-06-15T00:00:00+03:00" />
@@ -47,7 +47,7 @@
     </coding>
     <text value="A new use context" />
   </useContext>
-  <copyright value="savannah informatics limited" />
+  <copyright value="gawana technologies limited" />
   <fhirVersion value="1.0.1" />
   <mapping>
     <identity value="v2" />

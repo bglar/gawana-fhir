@@ -1,6 +1,9 @@
 import os
 
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
 class BaseConfig(object):
     PROJECT = "app"
 
@@ -12,7 +15,7 @@ class BaseConfig(object):
     TESTING = False
     PROD = False
 
-    ADMINS = ['brian.ogollah@savannahinformatics.com']
+    ADMINS = ['brian.ogollah@gmail.com']
 
     # for session
     SECRET_KEY = '172bb977-e752-4831-8959-2b87d1006669'

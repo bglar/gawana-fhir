@@ -1,5 +1,6 @@
 import pytest
 
+from fhir_server.configs import BASE_DIR
 from fhir_server.resources.base.resource_profile_manager import (
     ResourceProfile,
     XMLProfileManager
@@ -90,16 +91,16 @@ def test_apply_constraints_with_field_names_not_in_resource():
 
 
 def test_xml_profile_manager_generates_dict():
-    file_path = 'fhir_server/profiles/gawana-default.structuredefinition.xml'
-    cls_inst = XMLProfileManager(file_path)
+    file_path = '/profiles/gawana-default.structuredefinition.xml'
+    cls_inst = XMLProfileManager(BASE_DIR + file_path)
     constraints = cls_inst.construct_constraints()
 
     assert isinstance(constraints, dict)
 
 
 def test_xml_profile_manager_generates_required_constraints():
-    file_path = 'fhir_server/profiles/gawana-default.structuredefinition.xml'
-    cls_inst = XMLProfileManager(file_path)
+    file_path = '/profiles/gawana-default.structuredefinition.xml'
+    cls_inst = XMLProfileManager(BASE_DIR + file_path)
     constraints = cls_inst.construct_constraints()
 
     assert constraints['resource'] == 'Organization'
@@ -110,8 +111,8 @@ def test_xml_profile_manager_generates_required_constraints():
 
 
 def test_resource_profile_with_constraints_from_xml():
-    file_path = 'fhir_server/profiles/gawana-default.structuredefinition.xml'
-    cls_inst = XMLProfileManager(file_path)
+    file_path = '/profiles/gawana-default.structuredefinition.xml'
+    cls_inst = XMLProfileManager(BASE_DIR + file_path)
     constraints = cls_inst.construct_constraints()
 
     org_profile = ResourceProfile(constraints)
