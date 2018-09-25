@@ -152,4 +152,4 @@ Authors
 
 `Brian Ogollah`_
 
-.. _`Brian Ogollah`: https://github.com/bogolla
+.. _`Brian Ogollah`: https://github.com/bglar
