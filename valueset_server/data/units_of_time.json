@@ -1,0 +1,37 @@
+[
+    {
+        "code": "s",
+        "display": "second",
+        "definition": "second"
+    },
+    {
+        "code": "min",
+        "display": "minute",
+        "definition": "minute"
+    },
+    {
+        "code": "h",
+        "display": "hour",
+        "definition": "hour"
+    },
+    {
+        "code": "d",
+        "display": "day",
+        "definition": "day"
+    },
+    {
+        "code": "wk",
+        "display": "week",
+        "definition": "week"
+    },
+    {
+        "code": "mo",
+        "display": "month",
+        "definition": "month"
+    },
+    {
+        "code": "a",
+        "display": "year",
+        "definition": "year"
+    }
+]

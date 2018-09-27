@@ -29,11 +29,10 @@ def home():
     return "Simple Valueset Server"
 
 
-@valueset_app.route('/address_type/', methods=['GET', ])
-def valueset_type():
-    valueset_file = request.path.replace('/', '') + '.json'
-    data = get_data_from_json(
-        BASE_DIR + f'/valueset_server/data/{valueset_file}')
+@valueset_app.route('/<valueset>/', methods=['GET', ])
+def valueset_type(valueset):
+    valueset += '.json'
+    data = get_data_from_json(BASE_DIR + f'/valueset_server/data/{valueset}')
 
     get_data = data
     if request.args:

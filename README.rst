@@ -88,8 +88,8 @@ Setting up project environment
 
 Clone and go to the project directory::
 
-    $ git clone git@github.com:bglar/gawana_fhir_server.git
-    $ cd path/to/project/directory/gawana_fhir_server
+    $ git clone git@github.com:bglar/gawana-fhir.git
+    $ cd path/to/project/directory/gawana-fhir
 
 Create a py3.5.1 virtual environment::
 
@@ -100,7 +100,6 @@ Configure environment variables to use whenever the virtual environment is activ
     $ vim ~/{virtualenv_folder_path}/{env_name}/bin/postactivate
     # Add the following lines to the open file and then save.
     #
-    # cd /home/glar/Gawana/gawana_fhir_server/
     # export DATABASE_URL='postgres://ubuntu:@127.0.0.1:5432/gawana_fhir'
     # export TEST_DATABASE_URL='postgres://ubuntu:@127.0.0.1:5432/test_gawana_fhir'
     # export APP_SETTINGS='fhir_server.configs.base.DevelopmentConfig'
