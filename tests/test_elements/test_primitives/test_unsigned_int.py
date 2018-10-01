@@ -16,7 +16,7 @@ class TestUnsignedIntField(object):
         with pytest.raises(TypeError) as excinfo:
             primitives.UnsignedIntField().process_bind_param(-10, 'postgres')
 
-        assert ('Value -10 must be an int greater than or equal 0') in str(
+        assert 'Value -10 must be an int greater than or equal 0' in str(
             excinfo.value)
 
     def test_zero_is_acceptable(self):
@@ -46,5 +46,5 @@ class TestUnsignedIntField(object):
             session.add(post_data)
             session.commit()
 
-        assert ('Value -10 must be an int greater than or equal 0') in str(
+        assert 'Value -10 must be an int greater than or equal 0' in str(
             excinfo.value)
