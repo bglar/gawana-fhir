@@ -23,6 +23,11 @@ class TestUnsignedIntField(object):
         result = primitives.UnsignedIntField().process_bind_param(0, 'postgres')
         assert result == 0
 
+    def test_none_values(self):
+        result = primitives.UnsignedIntField().process_bind_param(
+            None, 'postgres')
+        assert result is None
+
     @pytest.fixture
     def TestDataTypesModel(self, Base, session):
         class TestDataTypesModel(Base):

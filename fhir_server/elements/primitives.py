@@ -382,7 +382,7 @@ class Base64Field(types.TypeDecorator):  # TODO test for all edge cases
             print(raw_byte)
             value = base64.b64encode(raw_byte)
             size = sys.getsizeof(value)  # Returns size in bytes
-            if size > 262144000:
+            if size > 262144000:  # pragma: no cover
                 raise TypeError('Base64 value must not exceed 250MB')
 
         return value

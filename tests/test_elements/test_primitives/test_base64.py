@@ -25,6 +25,16 @@ class TestBase64Field(object):
         assert result != self.encoded
         assert result == self.raw_data
 
+    def test_b64_None(self):
+        result = Base64Field().process_result_value(None, 'postgres')
+        assert result is None
+
+        bind = Base64Field().process_bind_param(None, 'postgres')
+        assert bind is None
+
+    # TODO Optimize this test and get rid of `pragma no cover` from::
+    #   fhir_server/elements/primitives.py:385
+    #
     # def test_data_not_more_than_250mb(self):
     #     size = sys.getsizeof(self.large_data)
     #     assert size > 262144000

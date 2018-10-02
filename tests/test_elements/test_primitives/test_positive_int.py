@@ -16,15 +16,21 @@ class TestPositiveIntField(object):
         with pytest.raises(TypeError) as excinfo:
             primitives.PositiveIntField().process_bind_param(-10, 'postgres')
 
-        assert ('Value -10 must be a positive integer greater than 0') in str(
+        assert 'Value -10 must be a positive integer greater than 0' in str(
             excinfo.value)
 
     def test_zero(self):
         with pytest.raises(TypeError) as excinfo:
             primitives.PositiveIntField().process_bind_param(0, 'postgres')
 
-        assert ('Value 0 must be a positive integer greater than 0') in str(
+        assert 'Value 0 must be a positive integer greater than 0' in str(
             excinfo.value)
+
+    def test_none(self):
+        result = primitives.PositiveIntField().process_bind_param(
+            None, 'postgres')
+
+        assert result is None
 
     @pytest.fixture
     def TestDataTypesModel(self, Base, session):
@@ -60,7 +66,7 @@ class TestPositiveIntField(object):
             session.add(post_data)
             session.commit()
 
-        assert ('Value -10 must be a positive integer greater than 0') in str(
+        assert 'Value -10 must be a positive integer greater than 0' in str(
             excinfo.value)
 
     def test_value_equal_0(self, session, TestDataTypesModel):
@@ -73,5 +79,5 @@ class TestPositiveIntField(object):
             session.add(post_data)
             session.commit()
 
-        assert ('Value 0 must be a positive integer greater than 0') in str(
+        assert 'Value 0 must be a positive integer greater than 0' in str(
             excinfo.value)
