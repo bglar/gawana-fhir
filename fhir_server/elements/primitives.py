@@ -361,7 +361,7 @@ class CodeField(StringField):
                 raise TypeError('Code value must not exceed 1MB')
 
             if not (regex_checker(value, regex)):
-                raise TypeError('This Code is invalid')
+                raise TypeError(f'This Code: {value} is invalid')
 
             if re.search(r"(\s\s)+", value):
                 raise TypeError('Code must not have a whitespace more '

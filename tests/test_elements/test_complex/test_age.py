@@ -1,5 +1,7 @@
 import pytest
 
+from unittest.mock import patch, Mock
+
 from sqlalchemy import Column
 from sqlalchemy.exc import StatementError
 from sqlalchemy_utils import register_composites
@@ -19,7 +21,16 @@ class TestAge(object):
             age = Column(AgeField())
         return TestAgeModel
 
-    def test_post_data(self, session, TestAgeModel):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_post_data(self, mock_get, session, TestAgeModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'mo'},
+                {'code': '<'}
+            ]
+        }
+
         post = TestAgeModel(
             id=1,
             age={
@@ -43,12 +54,17 @@ class TestAge(object):
         assert get.id == 1
         assert get.age.value == 24
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_reject_posting_data_with_code_not_in_valueset(
-            self, session, TestAgeModel):
+            self, mock_get, session, TestAgeModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [{'code': '<'}, {'code': 'min'}]}
+
         post = TestAgeModel(
             id=1,
             age={
-                'code': 'notinvalueset',
+                'code': 'not_in_valueset',
                 'system': 'http://unitsofmeasure.org',
                 'unit': 'min',
                 'value': 24,
@@ -64,7 +80,7 @@ class TestAge(object):
         with pytest.raises(StatementError) as excinfo:
             session.commit()
 
-        assert 'The age units must be defined in' in str(excinfo.value)
+        assert 'The age units must be defined' in str(excinfo.value)
 
     def test_post_data_with_null_duration_field(
             self, session, TestAgeModel):

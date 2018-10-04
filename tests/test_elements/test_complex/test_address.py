@@ -1,6 +1,8 @@
 import pytest
 import warnings
 
+from unittest.mock import patch
+
 from sqlalchemy import Column
 from sqlalchemy_utils import register_composites
 from sqlalchemy.exc import StatementError
@@ -20,7 +22,15 @@ class TestAddress(object):
             address = Column(AddressField())
         return TestAddressModel
 
-    def test_save_data(self, session, TestAddressModel):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_save_data(self, mock_get, session, TestAddressModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'home'},
+                {'code': 'postal'}
+            ]
+        }
         post = TestAddressModel(
             id=1,
             address={
@@ -71,8 +81,12 @@ class TestAddress(object):
         assert get.id == 1
         assert get.address.district is None
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_with_use_not_in_valueset(
-            self, session, TestAddressModel):
+            self, mock_get, session, TestAddressModel):
+        mock_get.return_value.json.return_value = {
+            'count': 1,
+            'data': [{'code': 'postal'}]}
         post = TestAddressModel(
             id=1,
             address={
@@ -102,8 +116,12 @@ class TestAddress(object):
         assert 'The address use must be defined in' in str(
             excinfo.value)
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_with_type_not_in_valueset(
-            self, session, TestAddressModel):
+            self, mock_get, session, TestAddressModel):
+        mock_get.return_value.json.return_value = {
+            'count': 1,
+            'data': [{'code': 'home'}]}
         post = TestAddressModel(
             id=1,
             address={
@@ -133,8 +151,15 @@ class TestAddress(object):
         assert 'The address type must be defined in' in str(
             excinfo.value)
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_warning_if_country_value_not_valid_alpha3_ISO1366(
-            self, session, TestAddressModel):
+            self, mock_get, session, TestAddressModel):
+        mock_get.return_value.json.return_value = {
+            'count': 1,
+            'data': [
+                {'code': 'postal'},
+                {'code': 'home'}
+            ]}
         post = TestAddressModel(
             id=1,
             address={
@@ -230,24 +255,33 @@ class TestAddress(object):
         assert not period[0].nullable
         assert not text[0].nullable
 
-    def test_post_data_field_city_present(self, session, TestProfiledAddress):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_post_data_field_city_present(
+            self, mock_get, session, TestProfiledAddress):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'home'},
+                {'code': 'postal'}
+            ]
+        }
         post = TestProfiledAddress(
             id=1,
-            # address={
-            #     'use': 'home',
-            #     'text': 'text',
-            #     'type': 'postal',
-            #     'state': 'state',
-            #     'postalCode': 'postal code',
-            #     'line': ['line1', 'line2'],
-            #     'district': 'district',
-            #     'country': 'KEN',
-            #     'city': 'city',
-            #     'period': {
-            #         'start': '2011-05-24',
-            #         'end': '2011-06-24'
-            #     }
-            # }
+            address={
+                'use': 'home',
+                'text': 'text',
+                'type': 'postal',
+                'state': 'state',
+                'postalCode': 'postal code',
+                'line': ['line1', 'line2'],
+                'district': 'district',
+                'country': 'KEN',
+                'city': 'city',
+                'period': {
+                    'start': '2011-05-24',
+                    'end': '2011-06-24'
+                }
+            }
         )
 
         session.execute("""
