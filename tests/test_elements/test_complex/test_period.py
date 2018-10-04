@@ -43,7 +43,7 @@ class TestPeriod(object):
         session.commit()
         get = session.query(TestPeriodModel).first()
         assert get.id == 1
-        assert str(get.period.start) == '2011-05-24 00:00:00+00:00'
+        assert str(get.period.start) == '2011-05-24 00:00:00+03:00'
 
     def test_posting_str_data_on_composite_fields(
             self, session, TestPeriodModel):
@@ -135,7 +135,7 @@ class TestPeriod(object):
         register_composites(session.connection())
         get = session.query(TestProfiledPeriod).first()
         assert get.id == 1
-        assert str(get.period.start) == '2011-05-24 00:00:00+00:00'
+        assert str(get.period.start) == '2011-05-24 00:00:00+03:00'
 
     def test_fail_to_post_data_missing_fields(
             self, session, TestProfiledPeriod):

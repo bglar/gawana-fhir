@@ -1,4 +1,6 @@
 from decimal import Decimal
+from unittest.mock import patch
+
 import pytest
 
 from sqlalchemy import Column
@@ -6,8 +8,7 @@ from sqlalchemy.exc import StatementError
 from sqlalchemy_utils import register_composites
 
 from fhir_server.elements import primitives
-from fhir_server.elements.complex.duration import (
-    Duration as DurationDef, DurationField)
+from fhir_server.elements.complex.duration import DurationField
 
 
 class TestDuration(object):
@@ -20,7 +21,15 @@ class TestDuration(object):
             duration = Column(DurationField())
         return TestDurationModel
 
-    def test_post_data(self, session, TestDurationModel):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_post_data(self, mock_get, session, TestDurationModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': '<'},
+                {'code': 'min'},
+                {'code': 'kg'}
+            ]}
         post = TestDurationModel(
             id=1,
             duration={
@@ -44,8 +53,15 @@ class TestDuration(object):
         assert get.id == 1
         assert get.duration.value == Decimal('2.400023')
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_reject_data_with_code_not_in_valuesets(
-            self, session, TestDurationModel):
+            self, mock_get, session, TestDurationModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': '<'},
+                {'code': 'kg'}
+            ]}
         post = TestDurationModel(
             id=1,
             duration={

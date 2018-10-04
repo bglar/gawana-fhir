@@ -286,7 +286,8 @@ class CompositeValidator(object):
     def validate_fhir_contactpoint(self):
         if self.values.system:
             url = CONTACT_POINT_SYSTEM_URL + '?code=' + self.values.system
-            self.validate_valuesets(url, 'contactpoint system')
+            self.validate_valuesets(
+                self.values.system, url, 'contactpoint system')
 
         if self.values.use:
             url = CONTACT_POINT_USE_URL + '?code=' + self.values.use

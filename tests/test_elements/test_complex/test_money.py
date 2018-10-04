@@ -1,13 +1,11 @@
 import pytest
-from decimal import Decimal
 
 from sqlalchemy import Column
 from sqlalchemy.exc import StatementError
 from sqlalchemy_utils import register_composites
 
 from fhir_server.elements import primitives
-from fhir_server.elements.complex.money import (
-    Money as MoneyDef, MoneyField)
+from fhir_server.elements.complex.money import Money as MoneyDef
 
 
 PMoneyField = MoneyDef(precision=5, scale=2)

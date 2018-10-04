@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 
 from sqlalchemy import Column
@@ -19,7 +21,13 @@ class TestHumanName(object):
             humanname = Column(HumanNameField())
         return TestHumanNameModel
 
-    def test_post_data(self, session, TestHumanNameModel):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_post_data(self, mock_get, session, TestHumanNameModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'official'}
+            ]}
         post = TestHumanNameModel(
             id=1,
             humanname={
@@ -188,8 +196,14 @@ class TestHumanName(object):
         assert 'text must be composed of the other name attributes' in str(
             excinfo.value)
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_with_use_not_defined_in_valuesets(
-            self, session, TestHumanNameModel):
+            self, mock_get, session, TestHumanNameModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': '<'}
+            ]}
         post = TestHumanNameModel(
             id=1,
             humanname={
@@ -273,8 +287,14 @@ class TestHumanName(object):
         assert not use[0].nullable
         assert not period[0].nullable
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_fields_present(
-            self, session, TestProfiledHumanName):
+            self, mock_get, session, TestProfiledHumanName):
+        mock_get.return_value.json.return_value = {
+            'count': 1,
+            'data': [
+                {'code': 'official'}
+            ]}
         post = TestProfiledHumanName(
             id=1,
             humanname={

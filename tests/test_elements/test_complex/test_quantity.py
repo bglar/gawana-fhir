@@ -1,8 +1,9 @@
+from unittest.mock import patch
 from decimal import Decimal
 import pytest
 import warnings
 
-from sqlalchemy import Column, CheckConstraint
+from sqlalchemy import Column
 from sqlalchemy.exc import StatementError
 from sqlalchemy_utils import register_composites
 
@@ -23,7 +24,13 @@ class TestSimpleQuantity(object):
 
         return TestSimpleQuantityModel
 
-    def test_post_data(self, session, TestSimpleQuantityModel):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_post_data(self, mock_get, session, TestSimpleQuantityModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'kg'}
+            ]}
         post = TestSimpleQuantityModel(
             id=1,
             simplequantity={
@@ -46,8 +53,14 @@ class TestSimpleQuantity(object):
         assert get.id == 1
         assert get.simplequantity.value == Decimal('2.400023')
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_warning_if_system_is_not_unitsofmeasure_org(
-            self, session, TestSimpleQuantityModel):
+            self, mock_get, session, TestSimpleQuantityModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'kg'}
+            ]}
         post = TestSimpleQuantityModel(
             id=1,
             simplequantity={
@@ -128,8 +141,14 @@ class TestSimpleQuantity(object):
         assert not unit[0].nullable
         assert not value[0].nullable
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_fields_present(
-            self, session, TestProfiledSimpleQuantity):
+            self, mock_get, session, TestProfiledSimpleQuantity):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'kg'}
+            ]}
         post = TestProfiledSimpleQuantity(
             id=1,
             simplequantity={
@@ -185,7 +204,14 @@ class TestQuantity(object):
             quantity = Column(QuantityField())
         return TestQuantityModel
 
-    def test_post_data(self, session, TestQuantityModel):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_post_data(self, mock_get, session, TestQuantityModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'kg'},
+                {'code': '<'}
+            ]}
         post = TestQuantityModel(
             id=1,
             quantity={
@@ -209,8 +235,14 @@ class TestQuantity(object):
         assert get.id == 1
         assert get.quantity.value == Decimal('2.400023')
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_warning_if_system_is_not_unitsofmeasure_org(
-            self, session, TestQuantityModel):
+            self, mock_get, session, TestQuantityModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'secondary'}
+            ]}
         post = TestQuantityModel(
             id=1,
             quantity={
@@ -253,8 +285,14 @@ class TestQuantity(object):
         assert get.id == 1
         assert get.quantity.code is None
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_fail_if_comparator_not_present_in_valueset(
-            self, session, TestQuantityModel):
+            self, mock_get, session, TestQuantityModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'secondary'}
+            ]}
         post = TestQuantityModel(
             id=1,
             quantity={
@@ -273,11 +311,18 @@ class TestQuantity(object):
         session.add(post)
         with pytest.raises(StatementError) as excinfo:
             session.commit()
-        assert ('The quantity comparator must be defined in') in str(
+        assert 'The quantity comparator must be defined in' in str(
             excinfo.value)
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_fail_if_code_present_and_no_system(
-            self, session, TestQuantityModel):
+            self, mock_get, session, TestQuantityModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'secondary'},
+                {'code': '<'}
+            ]}
         post = TestQuantityModel(
             id=1,
             quantity={
@@ -295,7 +340,7 @@ class TestQuantity(object):
         session.add(post)
         with pytest.raises(StatementError) as excinfo:
             session.commit()
-        assert ('system must be specified if code is provided') in str(
+        assert 'system must be specified if code is provided' in str(
             excinfo.value)
 
     @pytest.fixture
@@ -334,8 +379,15 @@ class TestQuantity(object):
         assert not value[0].nullable
         assert not comparator[0].nullable
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_fields_present(
-            self, session, TestProfiledQuantity):
+            self, mock_get, session, TestProfiledQuantity):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'kg'},
+                {'code': '<'}
+            ]}
         post = TestProfiledQuantity(
             id=1,
             quantity={
