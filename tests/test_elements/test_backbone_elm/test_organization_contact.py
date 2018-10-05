@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 
 from sqlalchemy import Column
@@ -20,7 +22,15 @@ class TestOrganizationContact(object):
             organizationcontact = Column(OrganizationContactField())
         return TestOrganizationContactModel
 
-    def test_post_data(self, session, TestOrganizationContactModel):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_post_data(self, mock_get, session, TestOrganizationContactModel):
+        mock_get.return_value.json.return_value = {
+            'count': 1,
+            'data': [
+                {'code': 'BILL'},
+                {'code': 'official'},
+                {'code': 'home'}
+            ]}
         post = TestOrganizationContactModel(
             id=1,
             organizationcontact={
@@ -192,8 +202,16 @@ class TestOrganizationContact(object):
         assert not address[0].nullable
         assert not telecom[0].nullable
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_fields_present(
-            self, session, TestProfiledOrganizationContact):
+            self, mock_get, session, TestProfiledOrganizationContact):
+        mock_get.return_value.json.return_value = {
+            'count': 1,
+            'data': [
+                {'code': 'BILL'},
+                {'code': 'official'},
+                {'code': 'home'}
+            ]}
         post = TestProfiledOrganizationContact(
             id=1,
             organizationcontact={
