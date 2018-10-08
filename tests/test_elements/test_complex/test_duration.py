@@ -21,7 +21,7 @@ class TestDuration(object):
             duration = Column(DurationField())
         return TestDurationModel
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data(self, mock_get, session, TestDurationModel):
         mock_get.return_value.json.return_value = {
             'count': 2,
@@ -53,7 +53,7 @@ class TestDuration(object):
         assert get.id == 1
         assert get.duration.value == Decimal('2.400023')
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_reject_data_with_code_not_in_valuesets(
             self, mock_get, session, TestDurationModel):
         mock_get.return_value.json.return_value = {

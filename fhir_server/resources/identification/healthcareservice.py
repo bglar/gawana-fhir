@@ -201,7 +201,7 @@ class HealthcareService(DomainResource):
 
             for code in daysOfWeek:
                 url = DAYS_OF_WEEK + '?code=' + code
-                self.validate_valuesets(url, 'service available Time')
+                self.validate_valuesets(code, url, 'service available Time')
 
         return availableTime
 

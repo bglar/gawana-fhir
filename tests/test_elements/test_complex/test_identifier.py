@@ -21,7 +21,7 @@ class TestIdentifier(object):
             identifier = Column(IdentifierField())
         return TestIdentifierModel
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data(self, mock_get, session, TestIdentifierModel):
         mock_get.return_value.json.return_value = {
             'count': 2,
@@ -69,7 +69,7 @@ class TestIdentifier(object):
         assert get.id == 1
         assert get.identifier.assigner.display == 'Patient X'
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data_with_use_not_in_valuesets(
             self, mock_get, session, TestIdentifierModel):
         mock_get.return_value.json.return_value = {
@@ -112,7 +112,7 @@ class TestIdentifier(object):
             session.commit()
         assert 'The identifier use must be defined in' in str(excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data_with_type_code_not_in_valuesets(
             self, mock_get, session, TestIdentifierModel):
         mock_get.return_value.json.return_value = {
@@ -158,7 +158,7 @@ class TestIdentifier(object):
         assert 'The identifier type must be defined in' in str(
             excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_reject_data_if_identifier_value_not_unique(
             self, mock_get, session, TestIdentifierModel):
         mock_get.return_value.json.return_value = {
@@ -288,7 +288,7 @@ class TestIdentifier(object):
         assert not period[0].nullable
         assert not ftype[0].nullable
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data_fields_present(
             self, mock_get, session, TestProfiledIdentifier):
         mock_get.return_value.json.return_value = {

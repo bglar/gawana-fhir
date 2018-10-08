@@ -137,7 +137,7 @@ class Practitioner(DomainResource):
     @validates('gender')
     def validate_practitioner_gender(self, key, gender):
         url = ADMINISTRATIVE_GENDER_URL + '?code=' + gender
-        self.validate_valuesets(url, 'practitioner gender')
+        self.validate_valuesets(gender, url, 'practitioner gender')
 
         return gender
 

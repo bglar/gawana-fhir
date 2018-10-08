@@ -1,7 +1,6 @@
 import re
 import base64
 import hashlib
-import requests
 import warnings
 import mimetypes
 
@@ -10,6 +9,7 @@ import jwt
 from pycountry import countries
 
 from fhir_server.configs.constants import SANCTIONED_CODE_URLS
+from fhir_server.helpers.validations import validate_valuesets
 from .xhtml_validator import xhtml_validator
 from .reference_validator import validate_reference
 from fhir_server.configs import (
@@ -40,17 +40,6 @@ class CompositeValidator(object):
         # Get the method from 'self'. Default to a lambda.
         method = getattr(self, method_name, lambda: "nothing")
         return method()
-
-    def validate_valuesets(self, code_value, url, response):
-        resp = requests.get(url)
-
-        # TODO optimize this validation
-        if 'data' in resp.json():
-            for value in resp.json()['data']:
-                if value['code'] == code_value:
-                    return
-
-        raise TypeError(f'The {response} must be defined in {url}')
 
     def validate_fhir_range(self):
         if (self.values.__getattribute__('high')) and (
@@ -121,7 +110,7 @@ class CompositeValidator(object):
         self.validate_fhir_simplequantity()
         if self.values.comparator:
             url = QUANTITY_COMPARATOR_URL + '?code=' + self.values.comparator
-            self.validate_valuesets(
+            validate_valuesets(
                 self.values.comparator,
                 url, 'quantity comparator')
 
@@ -131,7 +120,7 @@ class CompositeValidator(object):
         self.validate_fhir_quantity()
         if self.values.code:
             url = AGE_UNITS_URL + '?code=' + self.values.code
-            self.validate_valuesets(
+            validate_valuesets(
                 self.values.code, url, 'age units')
 
         return self.values
@@ -154,7 +143,7 @@ class CompositeValidator(object):
         self.validate_fhir_quantity()
         if self.values.code:
             url = UNITS_OF_TIME_URL + '?code=' + self.values.code
-            self.validate_valuesets(
+            validate_valuesets(
                 self.values.code, url, 'duration units')
 
         return self.values
@@ -196,7 +185,7 @@ class CompositeValidator(object):
 
         if self.values.use:
             url = HUMANNAME_USE_URL + '?code=' + self.values.use
-            self.validate_valuesets(self.values.use, url, 'humanname use')
+            validate_valuesets(self.values.use, url, 'humanname use')
 
         return self.values
 
@@ -240,20 +229,20 @@ class CompositeValidator(object):
             if self.values.repeat.durationUnits:
                 url = UNITS_OF_TIME_URL + '?code=' + (
                     self.values.repeat.durationUnits)
-                self.validate_valuesets(
+                validate_valuesets(
                     self.values.repeat.durationUnits,
                     url, 'timing durationUnits')
 
             if self.values.repeat.periodUnits:
                 url = UNITS_OF_TIME_URL + '?code=' + (
                     self.values.repeat.periodUnits)
-                self.validate_valuesets(
+                validate_valuesets(
                     self.values.repeat.periodUnits,
                     url, 'timing periodUnits')
 
             if self.values.repeat.when:
                 url = EVENT_TIMING_URL + '?code=' + self.values.repeat.when
-                self.validate_valuesets(
+                validate_valuesets(
                     self.values.repeat.when,
                     url, 'timing when')
 
@@ -261,7 +250,7 @@ class CompositeValidator(object):
             url = TIMING_ABBREVIATION_URL + '?code='
             for i, val in enumerate(self.values.code.coding):
                 get_url = url + self.values.code.coding[i].code
-                self.validate_valuesets(
+                validate_valuesets(
                     self.values.code.coding[i].code,
                     get_url, 'timing code')
 
@@ -286,23 +275,23 @@ class CompositeValidator(object):
     def validate_fhir_contactpoint(self):
         if self.values.system:
             url = CONTACT_POINT_SYSTEM_URL + '?code=' + self.values.system
-            self.validate_valuesets(
+            validate_valuesets(
                 self.values.system, url, 'contactpoint system')
 
         if self.values.use:
             url = CONTACT_POINT_USE_URL + '?code=' + self.values.use
-            self.validate_valuesets(self.values.use, url, 'contactpoint use')
+            validate_valuesets(self.values.use, url, 'contactpoint use')
 
         return self.values
 
     def validate_fhir_address(self):
         if self.values.type:
             url = ADDRESS_TYPE_URL + '?code=' + self.values.type
-            self.validate_valuesets(self.values.type, url, 'address type')
+            validate_valuesets(self.values.type, url, 'address type')
 
         if self.values.use:
             url = ADDRESS_USE_URL + '?code=' + self.values.use
-            self.validate_valuesets(self.values.use, url, 'address use')
+            validate_valuesets(self.values.use, url, 'address use')
 
         if self.values.country:
             country_code = self.values.country
@@ -322,7 +311,7 @@ class CompositeValidator(object):
 
         for val in self.values.type:
             get_url = url + val.code
-            self.validate_valuesets(val.code, get_url, 'signature code')
+            validate_valuesets(val.code, get_url, 'signature code')
 
         if not (self.values.contentType in SIGNATURE_MIME_TYPES):
             raise ValueError(
@@ -342,19 +331,19 @@ class CompositeValidator(object):
             url = IDENTIFIER_TYPE_URL + '?code='
             for i, val in enumerate(self.values.type.coding):
                 get_url = url + self.values.type.coding[i].code
-                self.validate_valuesets(
+                validate_valuesets(
                     self.values.type.coding[i].code,
                     get_url, 'identifier type')
 
         if self.values.use:
             url = IDENTIFIER_USE_URL + '?code=' + self.values.use
-            self.validate_valuesets(self.values.use, url, 'identifier use')
+            validate_valuesets(self.values.use, url, 'identifier use')
 
         return self.values
 
     def validate_fhir_narrative(self):
         url = NARRATIVE_STATUS_URL + '?code=' + self.values.status
-        self.validate_valuesets(self.values.status, url, 'narrative status')
+        validate_valuesets(self.values.status, url, 'narrative status')
 
         xhtml_validator.reset()
         xhtml_validator.feed(self.values.div)
@@ -371,7 +360,7 @@ class CompositeValidator(object):
             codings = self.values.purpose.coding
             for coding in codings:
                 url = CONTACT_ENTITY_TYPE_URL + '?code=' + coding.code
-                self.validate_valuesets(
+                validate_valuesets(
                     coding.code, url, 'organization contact type')
 
     def validate_fhir_coding(self):

@@ -24,7 +24,7 @@ class TestSimpleQuantity(object):
 
         return TestSimpleQuantityModel
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data(self, mock_get, session, TestSimpleQuantityModel):
         mock_get.return_value.json.return_value = {
             'count': 2,
@@ -53,7 +53,7 @@ class TestSimpleQuantity(object):
         assert get.id == 1
         assert get.simplequantity.value == Decimal('2.400023')
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_warning_if_system_is_not_unitsofmeasure_org(
             self, mock_get, session, TestSimpleQuantityModel):
         mock_get.return_value.json.return_value = {
@@ -141,7 +141,7 @@ class TestSimpleQuantity(object):
         assert not unit[0].nullable
         assert not value[0].nullable
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data_fields_present(
             self, mock_get, session, TestProfiledSimpleQuantity):
         mock_get.return_value.json.return_value = {
@@ -204,7 +204,7 @@ class TestQuantity(object):
             quantity = Column(QuantityField())
         return TestQuantityModel
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data(self, mock_get, session, TestQuantityModel):
         mock_get.return_value.json.return_value = {
             'count': 2,
@@ -235,7 +235,7 @@ class TestQuantity(object):
         assert get.id == 1
         assert get.quantity.value == Decimal('2.400023')
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_warning_if_system_is_not_unitsofmeasure_org(
             self, mock_get, session, TestQuantityModel):
         mock_get.return_value.json.return_value = {
@@ -285,7 +285,7 @@ class TestQuantity(object):
         assert get.id == 1
         assert get.quantity.code is None
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_fail_if_comparator_not_present_in_valueset(
             self, mock_get, session, TestQuantityModel):
         mock_get.return_value.json.return_value = {
@@ -314,7 +314,7 @@ class TestQuantity(object):
         assert 'The quantity comparator must be defined in' in str(
             excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_fail_if_code_present_and_no_system(
             self, mock_get, session, TestQuantityModel):
         mock_get.return_value.json.return_value = {
@@ -379,7 +379,7 @@ class TestQuantity(object):
         assert not value[0].nullable
         assert not comparator[0].nullable
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data_fields_present(
             self, mock_get, session, TestProfiledQuantity):
         mock_get.return_value.json.return_value = {

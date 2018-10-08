@@ -21,7 +21,7 @@ class TestHumanName(object):
             humanname = Column(HumanNameField())
         return TestHumanNameModel
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data(self, mock_get, session, TestHumanNameModel):
         mock_get.return_value.json.return_value = {
             'count': 2,
@@ -196,7 +196,7 @@ class TestHumanName(object):
         assert 'text must be composed of the other name attributes' in str(
             excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data_with_use_not_defined_in_valuesets(
             self, mock_get, session, TestHumanNameModel):
         mock_get.return_value.json.return_value = {
@@ -287,7 +287,7 @@ class TestHumanName(object):
         assert not use[0].nullable
         assert not period[0].nullable
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data_fields_present(
             self, mock_get, session, TestProfiledHumanName):
         mock_get.return_value.json.return_value = {

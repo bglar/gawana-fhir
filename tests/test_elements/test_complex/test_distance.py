@@ -20,7 +20,7 @@ class TestDistance(object):
             distance = Column(DistanceField())
         return TestDistanceModel
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data(self, mock_get, session, TestDistanceModel):
         mock_get.return_value.json.return_value = {
             'count': 2,

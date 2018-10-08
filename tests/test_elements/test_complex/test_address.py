@@ -22,7 +22,7 @@ class TestAddress(object):
             address = Column(AddressField())
         return TestAddressModel
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_save_data(self, mock_get, session, TestAddressModel):
         mock_get.return_value.json.return_value = {
             'count': 2,
@@ -81,7 +81,7 @@ class TestAddress(object):
         assert get.id == 1
         assert get.address.district is None
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data_with_use_not_in_valueset(
             self, mock_get, session, TestAddressModel):
         mock_get.return_value.json.return_value = {
@@ -116,7 +116,7 @@ class TestAddress(object):
         assert 'The address use must be defined in' in str(
             excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data_with_type_not_in_valueset(
             self, mock_get, session, TestAddressModel):
         mock_get.return_value.json.return_value = {
@@ -151,7 +151,7 @@ class TestAddress(object):
         assert 'The address type must be defined in' in str(
             excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_warning_if_country_value_not_valid_alpha3_ISO1366(
             self, mock_get, session, TestAddressModel):
         mock_get.return_value.json.return_value = {
@@ -255,7 +255,7 @@ class TestAddress(object):
         assert not period[0].nullable
         assert not text[0].nullable
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data_field_city_present(
             self, mock_get, session, TestProfiledAddress):
         mock_get.return_value.json.return_value = {

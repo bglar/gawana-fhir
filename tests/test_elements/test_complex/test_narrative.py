@@ -19,7 +19,7 @@ class TestNarrative(object):
             narrative = Column(NarrativeField())
         return TestNarrativeModel
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data(self, mock_get, session, TestNarrativeModel):
         mock_get.return_value.json.return_value = {
             'count': 2,
@@ -46,7 +46,7 @@ class TestNarrative(object):
         assert get.id == 1
         assert get.narrative.status == 'generated'
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_reject_data_with_invalid_tags(
             self, mock_get, session, TestNarrativeModel):
         mock_get.return_value.json.return_value = {
@@ -74,7 +74,7 @@ class TestNarrative(object):
             session.commit()
         assert 'The tag lala is not valid' in str(excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_reject_data_with_invalid_attributes(
             self, mock_get, session, TestNarrativeModel):
         mock_get.return_value.json.return_value = {
@@ -102,7 +102,7 @@ class TestNarrative(object):
             session.commit()
         assert 'The attribute noattr is not valid in' in str(excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_reject_data_with_status_not_in_valuesets(
             self, mock_get, session, TestNarrativeModel):
         mock_get.return_value.json.return_value = {
@@ -130,7 +130,7 @@ class TestNarrative(object):
             session.commit()
         assert 'The narrative status must be defined in' in str(excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_reject_content_containing_empty_string(
             self, mock_get, session, TestNarrativeModel):
         mock_get.return_value.json.return_value = {
