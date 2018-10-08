@@ -34,7 +34,6 @@ def reference_resolution(url):
     if data.status_code != 200:
         raise TypeError(
             'We were unable to resolve a resource reference at %s' % url)
-    pass
 
 
 def validate_reference(ref_str):

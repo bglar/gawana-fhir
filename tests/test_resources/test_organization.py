@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 from sqlalchemy_utils import register_composites
 
@@ -5,10 +7,19 @@ from fhir_server.resources.identification.organization import Organization
 
 
 class TestOrganization(object):
+    valuesets_data = [
+        {'code': 'secondary'},
+        {'code': 'UDI'},
+        {'code': 'prov'},
+        {'code': 'dkls323-3223hj'},
+        {'code': 'work'},
+        {'code': 'phone'},
+        {'code': 'generated'}
+    ]
     id = "109"
     implicitRules = "https://gawana-fhir.constraints.co.ke/rules"
     language = "EN"
-    active = "True"
+    active = True
     name = "Test Organization"
     identifier = [{
         "system": "system",
@@ -102,7 +113,12 @@ class TestOrganization(object):
         ]
     }
 
-    def test_organization_repr(self):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_organization_repr(self, mock_get):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valuesets_data),
+            'data': self.valuesets_data
+        }
         data = Organization(
             id=self.id,
             implicitRules=self.implicitRules,
@@ -120,7 +136,14 @@ class TestOrganization(object):
 
         assert str(data) == "<'Organization' 'Test Organization'>"
 
-    def test_save_organization(self, session):
+    @patch('fhir_server.elements.base.reference_validator.reference_resolution')
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_save_organization(self, mock_get, mock_ref, session):
+        mock_ref.return_value = True
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valuesets_data),
+            'data': self.valuesets_data
+        }
         data = Organization(
             id=self.id,
             implicitRules=self.implicitRules,
@@ -141,7 +164,12 @@ class TestOrganization(object):
         get = session.query(Organization).first()
         assert get.name == 'Test Organization'
 
-    def test_reject_data_if_org_type_not_in_valuesets(self, session):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_reject_data_if_org_type_not_in_valuesets(self, mock_get, session):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valuesets_data),
+            'data': self.valuesets_data
+        }
         with pytest.raises(TypeError) as excinfo:
             Organization(
                 id=self.id,
@@ -170,7 +198,12 @@ class TestOrganization(object):
         assert "The organization type code must be defined in" in str(
             excinfo.value)
 
-    def test_reject_data_if_address_is_of_use_home(self):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_reject_data_if_address_is_of_use_home(self, mock_get):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valuesets_data),
+            'data': self.valuesets_data
+        }
         with pytest.raises(ValueError) as excinfo:
             Organization(
                 id=self.id,
@@ -200,10 +233,15 @@ class TestOrganization(object):
                 contact=self.contact,
                 meta=self.meta
             )
-        assert "An address of an organization can never be of "
-        "use `home`" in str(excinfo.value)
+        assert "An address of an organization can never be of " \
+               "use `home`" in str(excinfo.value)
 
-    def test_reject_data_if_telecom_is_of_use_home(self):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_reject_data_if_telecom_is_of_use_home(self, mock_get):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valuesets_data),
+            'data': self.valuesets_data
+        }
         with pytest.raises(ValueError) as excinfo:
             Organization(
                 id=self.id,
@@ -228,10 +266,15 @@ class TestOrganization(object):
                 contact=self.contact,
                 meta=self.meta
             )
-        assert "The telecom of an organization can never be of "
-        "use `home`" in str(excinfo.value)
+        assert "The telecom of an organization can never be of " \
+               "use `home`" in str(excinfo.value)
 
-    def test_reject_data_if_partOf_reference_is_not_valid(self):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_reject_data_if_partOf_reference_is_not_valid(self, mock_get):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valuesets_data),
+            'data': self.valuesets_data
+        }
         with pytest.raises(ValueError) as excinfo:
             Organization(
                 id=self.id,

@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from fhir_server.resources.identification.healthcareservice import (
     HealthcareService
 )
@@ -149,7 +151,23 @@ class TestHealthcareService(object):
     }]
     availabilityExceptions = 'availabilityExceptions'
 
-    def test_healthcareservice_repr(self):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_healthcareservice_repr(self, mock_get):
+        mock_get.return_value.json.return_value = {
+            'count': 1,
+            'data': [
+                {'code': 'secondary'},
+                {'code': 'UDI'},
+                {'code': '6'},
+                {'code': '4'},
+                {'code': '394592004'},
+                {'code': 'work'},
+                {'code': 'cost'},
+                {'code': 'area'},
+                {'code': 'mail'},
+                {'code': 'mon'}
+            ]
+        }
         data = HealthcareService(
             id=self.id,
             implicitRules=self.implicitRules,

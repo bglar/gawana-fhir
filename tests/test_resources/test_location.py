@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 from sqlalchemy_utils import register_composites
 
@@ -5,6 +7,17 @@ from fhir_server.resources.identification.location import Location
 
 
 class TestLocation(object):
+    valueset_data = [
+        {'code': 'secondary'},
+        {'code': 'UDI'},
+        {'code': 'FM'},
+        {'code': 'work'},
+        {'code': 'area'},
+        {'code': 'suspended'},
+        {'code': 'instance'},
+        {'code': 'phone'},
+        {'code': 'generated'}
+    ]
     id = "1"
     implicitRules = "https://gawana-fhir.constraints.co.ke/rules"
     language = "EN"
@@ -97,7 +110,12 @@ class TestLocation(object):
         "reference": "http://spark.furore.com/fhir/Location/2"
     }
 
-    def test_location_repr(self):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_location_repr(self, mock_get):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valueset_data),
+            'data': self.valueset_data
+        }
         data = Location(
             id=self.id,
             implicitRules=self.implicitRules,
@@ -118,7 +136,12 @@ class TestLocation(object):
 
         assert str(data) == "<Location 'Nairobi'>"
 
-    def test_code_fields_validator_none_value(self):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_code_fields_validator_none_value(self, mock_get):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valueset_data),
+            'data': self.valueset_data
+        }
         data = Location(
             id=self.id,
             implicitRules=self.implicitRules,
@@ -139,7 +162,14 @@ class TestLocation(object):
 
         assert str(data) == "<Location 'Nairobi'>"
 
-    def test_save_location(self, session):
+    @patch('fhir_server.elements.base.reference_validator.reference_resolution')
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_save_location(self, mock_get, mock_ref, session):
+        mock_ref.return_value = True
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valueset_data),
+            'data': self.valueset_data
+        }
         data = Location(
             id=self.id,
             implicitRules=self.implicitRules,
@@ -164,7 +194,12 @@ class TestLocation(object):
         assert get.id == '1'
         assert get.language == 'EN'
 
-    def test_reject_data_if_status_is_not_valid(self):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_reject_data_if_status_is_not_valid(self, mock_get):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valueset_data),
+            'data': self.valueset_data
+        }
         with pytest.raises(TypeError) as excinfo:
             Location(
                 id=self.id,
@@ -185,7 +220,12 @@ class TestLocation(object):
             )
         assert "The location status must be defined in" in str(excinfo.value)
 
-    def test_reject_data_if_mode_is_not_valid(self):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_reject_data_if_mode_is_not_valid(self, mock_get):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valueset_data),
+            'data': self.valueset_data
+        }
         with pytest.raises(TypeError) as excinfo:
             Location(
                 id=self.id,
@@ -206,7 +246,12 @@ class TestLocation(object):
             )
         assert "The location mode must be defined in" in str(excinfo.value)
 
-    def test_reject_data_if_locationType_is_not_valid(self):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_reject_data_if_locationType_is_not_valid(self, mock_get):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valueset_data),
+            'data': self.valueset_data
+        }
         with pytest.raises(TypeError) as excinfo:
             Location(
                 id=self.id,
@@ -237,7 +282,12 @@ class TestLocation(object):
             )
         assert "The location type code must be defined in" in str(excinfo.value)
 
-    def test_reject_data_if_physical_type_is_not_valid(self):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_reject_data_if_physical_type_is_not_valid(self, mock_get):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valueset_data),
+            'data': self.valueset_data
+        }
         with pytest.raises(TypeError) as excinfo:
             Location(
                 id=self.id,

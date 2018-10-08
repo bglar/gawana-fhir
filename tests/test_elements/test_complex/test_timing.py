@@ -21,7 +21,7 @@ class TestTiming(object):
             timing = Column(TimingField())
         return TestTimingModel
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data(self, mock_get, session, TestTimingModel):
         mock_get.return_value.json.return_value = {
             'count': 1,
@@ -98,7 +98,7 @@ class TestTiming(object):
         assert get.id == 1
         assert get.timing.repeat.durationUnits == 'min'
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_if_missing_durationMax_and_periodMax(
             self, mock_get, session, TestTimingModel):
         mock_get.return_value.json.return_value = {
@@ -174,7 +174,7 @@ class TestTiming(object):
         assert get.id == 1
         assert get.timing.repeat.durationUnits == 'min'
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_fails_if_duration_present_but_no_durationUnits(
             self, mock_get, session, TestTimingModel):
         mock_get.return_value.json.return_value = {
@@ -249,7 +249,7 @@ class TestTiming(object):
         assert ('durationUnits must be present for the duration '
                 'provided') in str(excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_fails_if_period_present_but_no_periodUnits(
             self, mock_get, session, TestTimingModel):
         mock_get.return_value.json.return_value = {
@@ -324,7 +324,7 @@ class TestTiming(object):
         assert ('periodUnits must be present for the period '
                 'provided') in str(excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_fails_if_both_frequency_and_when_exists(
             self, mock_get, session, TestTimingModel):
         mock_get.return_value.json.return_value = {
@@ -402,7 +402,7 @@ class TestTiming(object):
         assert ('Either frequency or when can exist, not both') in str(
             excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_duration_should_be_non_negative_value(
             self, mock_get, session, TestTimingModel):
         mock_get.return_value.json.return_value = {
@@ -479,7 +479,7 @@ class TestTiming(object):
             session.commit()
         assert 'duration SHALL be a non-negative value' in str(excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_period_should_be_non_negative_value(
             self, mock_get, session, TestTimingModel):
         mock_get.return_value.json.return_value = {
@@ -554,7 +554,7 @@ class TestTiming(object):
             session.commit()
         assert 'period SHALL be a non-negative value' in str(excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_period_must_be_provided_if_periodMax_is_provided(
             self, mock_get, session, TestTimingModel):
         mock_get.return_value.json.return_value = {
@@ -629,7 +629,7 @@ class TestTiming(object):
         assert 'If there is a periodMax, there must be a period' in str(
             excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_duration_must_be_provided_if_durationMax_is_provided(
             self, mock_get, session, TestTimingModel):
         mock_get.return_value.json.return_value = {
@@ -704,7 +704,7 @@ class TestTiming(object):
         assert ('If there is a durationMax, there must be a duration') in str(
             excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_fails_if_duration_unit_provided_is_not_in_valueset(
             self, mock_get, session, TestTimingModel):
         mock_get.return_value.json.return_value = {
@@ -780,7 +780,7 @@ class TestTiming(object):
         assert ('The timing durationUnits must be defined in') in str(
             excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_fails_if_period_unit_provided_is_not_in_valueset(
             self, mock_get, session, TestTimingModel):
         mock_get.return_value.json.return_value = {
@@ -856,7 +856,7 @@ class TestTiming(object):
         assert 'The timing periodUnits must be defined in' in str(
             excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_fails_if_when_value_provided_is_not_in_valueset(
             self, mock_get, session, TestTimingModel):
         mock_get.return_value.json.return_value = {
@@ -932,7 +932,7 @@ class TestTiming(object):
         assert 'The timing when must be defined in' in str(
             excinfo.value)
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_fails_if_code_value_provided_is_not_in_valueset(
             self, mock_get, session, TestTimingModel):
         mock_get.return_value.json.return_value = {
@@ -1059,7 +1059,7 @@ class TestTiming(object):
         assert not code[0].nullable
         assert not event[0].nullable
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data_fields_present(
             self, mock_get, session, TestProfiledTiming):
         mock_get.return_value.json.return_value = {

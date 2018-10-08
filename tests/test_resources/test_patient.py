@@ -1,9 +1,23 @@
-from sqlalchemy_utils import register_composites
+from unittest.mock import patch
 
 from fhir_server.resources.identification.patient import Patient
 
 
 class TestPatient(object):
+    valuesets_data = [
+        {'code': 'secondary'},
+        {'code': 'UDI'},
+        {'code': 'official'},
+        {'code': 'work'},
+        {'code': 'U'},
+        {'code': 'family'},
+        {'code': 'gsd'},
+        {'code': 'intact'},
+        {'code': 'canislf'},
+        {'code': 'en'},
+        {'code': 'male'},
+        {'code': 'replace'}
+    ]
     id = "1"
     implicitRules = "https://gawana-fhir.constraints.co.ke/rules"
     language = "en"
@@ -167,7 +181,12 @@ class TestPatient(object):
         "type": "replace"
     }]
 
-    def test_patient_repr(self):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_patient_repr(self, mock_get):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valuesets_data),
+            'data': self.valuesets_data
+        }
         data = Patient(
             id=self.id,
             implicitRules=self.implicitRules,

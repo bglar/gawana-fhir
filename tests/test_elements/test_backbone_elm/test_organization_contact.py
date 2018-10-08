@@ -22,7 +22,7 @@ class TestOrganizationContact(object):
             organizationcontact = Column(OrganizationContactField())
         return TestOrganizationContactModel
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data(self, mock_get, session, TestOrganizationContactModel):
         mock_get.return_value.json.return_value = {
             'count': 1,
@@ -202,7 +202,7 @@ class TestOrganizationContact(object):
         assert not address[0].nullable
         assert not telecom[0].nullable
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data_fields_present(
             self, mock_get, session, TestProfiledOrganizationContact):
         mock_get.return_value.json.return_value = {

@@ -20,7 +20,7 @@ class TestCount(object):
             count = Column(CountField())
         return TestCountModel
 
-    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    @patch('fhir_server.helpers.validations.requests.get')
     def test_post_data(self, mock_get, session, TestCountModel):
         mock_get.return_value.json.return_value = {
             'count': 1,

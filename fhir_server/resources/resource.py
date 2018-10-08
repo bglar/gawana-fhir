@@ -2,12 +2,12 @@ import re
 import uuid
 from datetime import datetime, timezone
 
-import requests
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declared_attr
 from flask_sqlalchemy import SignallingSession
 
 from fhir_server.configs.database import db
+from fhir_server.helpers.validations import validate_valuesets as vv
 from fhir_server.elements import primitives
 from fhir_server.elements.meta import MetaField
 from fhir_server.utils import (
@@ -58,16 +58,9 @@ class Resource(CRUDMixin, ElementSerializer, Versioned, BaseOperations,
     deleted_at = Column(primitives.InstantField, default=None)
     is_deleted = Column(primitives.BooleanField, default=False, index=True)
 
-    def validate_valuesets(self, url, response):
-        data = requests.get(url)
-        if not (data.status_code) == 200:
-            raise TypeError(
-                'A request to %s returned a %s status code' % (
-                    url, data.status_code))
-
-        if not (data.json()['count'] == 1):
-            raise TypeError(
-                'The %s must be defined in %s' % (response, url))
+    # Add this as a resource attribute
+    def validate_valuesets(self, value, url, resp):
+        return vv(value, url, resp)
 
     def code_fields_validator(self, values, endpoint, message):
         if not values:
@@ -83,7 +76,7 @@ class Resource(CRUDMixin, ElementSerializer, Versioned, BaseOperations,
                         code_val = code.get('code')
                         url = endpoint + '?code=' + code_val
 
-                        self.validate_valuesets(url, message)
+                        self.validate_valuesets(code_val, url, message)
 
         elif isinstance(values, dict):
             codes = values.get('coding')
@@ -92,11 +85,11 @@ class Resource(CRUDMixin, ElementSerializer, Versioned, BaseOperations,
                     code_val = code.get('code')
                     url = endpoint + '?code=' + code_val
 
-                    self.validate_valuesets(url, message)
+                    self.validate_valuesets(code_val, url, message)
 
         elif isinstance(values, str):
             url = endpoint + '?code=' + values
-            self.validate_valuesets(url, message)
+            self.validate_valuesets(values, url, message)
 
         return values
 
