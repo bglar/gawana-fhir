@@ -1,9 +1,28 @@
+from unittest.mock import patch
+
 from sqlalchemy_utils import register_composites
 
 from fhir_server.resources.identification.practitioner import Practitioner
 
 
 class TestPractitioner(object):
+    valuesets_data = [
+        {'code': 'secondary'},
+        {'code': 'UDI'},
+        {'code': 'official'},
+        {'code': 'work'},
+        {'code': 'U'},
+        {'code': 'family'},
+        {'code': '100000'},
+        {'code': 'postal'},
+        {'code': 'phone'},
+        {'code': 'doctor'},
+        {'code': 'en'},
+        {'code': 'male'},
+        {'code': 'replace'},
+        {'code': 'cardio'},
+        {'code': 'generated'}
+    ]
     id = "1"
     implicitRules = "https://gawana-fhir.constraints.co.ke/rules"
     language = "en"
@@ -136,7 +155,12 @@ class TestPractitioner(object):
 
         assert str(data) == "<Practitioner {}>".format(self.name)
 
-    def test_save_practitioner(self, session):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_save_practitioner(self, mock_get, session):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valuesets_data),
+            'data': self.valuesets_data
+        }
         data = Practitioner(
             id=self.id,
             implicitRules=self.implicitRules,

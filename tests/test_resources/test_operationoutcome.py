@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from sqlalchemy_utils import register_composites
 
 from fhir_server.resources.infrastructure.operationoutcome import (
@@ -5,6 +7,10 @@ from fhir_server.resources.infrastructure.operationoutcome import (
 
 
 class TestOperationOutcome(object):
+    valueset_data = [
+        {'code': 'MSG_CANT_PARSE_CONTENT'},
+        {'code': 'generated'}
+    ]
     id = "1"
     issue = [{
         "code": "invalid",
@@ -33,7 +39,12 @@ class TestOperationOutcome(object):
 
         assert str(data) == "<OperationOutcome '1'>"
 
-    def test_save_operationoutcome(self, session):
+    @patch('fhir_server.helpers.validations.requests.get')
+    def test_save_operationoutcome(self, mock_get, session):
+        mock_get.return_value.json.return_value = {
+            'count': len(self.valueset_data),
+            'data': self.valueset_data
+        }
         data = OperationOutcome(
             id=self.id,
             issue=self.issue
