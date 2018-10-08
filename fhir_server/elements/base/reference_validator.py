@@ -31,7 +31,7 @@ url_regex = (
 
 def reference_resolution(url):
     data = requests.get(url)
-    if not data.status_code == 200:
+    if data.status_code != 200:
         raise TypeError(
             'We were unable to resolve a resource reference at %s' % url)
     pass

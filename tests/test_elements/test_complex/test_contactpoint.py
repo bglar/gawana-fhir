@@ -1,5 +1,7 @@
 import pytest
 
+from unittest.mock import patch
+
 from sqlalchemy import Column
 from sqlalchemy.exc import StatementError
 from sqlalchemy_utils import register_composites
@@ -19,7 +21,14 @@ class TestContactPoint(object):
             contactpoint = Column(ContactPointField())
         return TestContactPointModel
 
-    def test_post_data(self, session, TestContactPointModel):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_post_data(self, mock_get, session, TestContactPointModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'phone'},
+                {'code': 'home'}
+            ]}
         post = TestContactPointModel(
             id=1,
             contactpoint={
@@ -46,8 +55,14 @@ class TestContactPoint(object):
         assert get.id == 1
         assert get.contactpoint.value == '+254712122988'
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_with_system_not_defined_in_valueset(
-            self, session, TestContactPointModel):
+            self, mock_get, session, TestContactPointModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'work'},
+            ]}
         post = TestContactPointModel(
             id=1,
             contactpoint={
@@ -71,11 +86,17 @@ class TestContactPoint(object):
         register_composites(session.connection())
         with pytest.raises(StatementError) as excinfo:
             session.commit()
-        assert ('The contactpoint system must be defined in') in str(
+        assert 'The contactpoint system must be defined in' in str(
             excinfo.value)
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_with_use_not_defined_in_valueset(
-            self, session, TestContactPointModel):
+            self, mock_get, session, TestContactPointModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'phone'}
+            ]}
         post = TestContactPointModel(
             id=1,
             contactpoint={
@@ -99,7 +120,7 @@ class TestContactPoint(object):
         register_composites(session.connection())
         with pytest.raises(StatementError) as excinfo:
             session.commit()
-        assert ('The contactpoint use must be defined in') in str(
+        assert 'The contactpoint use must be defined in' in str(
             excinfo.value)
 
     def test_post_data_with_null_contactpoint_field(
@@ -156,8 +177,15 @@ class TestContactPoint(object):
         assert not value[0].nullable
         assert not period[0].nullable
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_fields_present(
-            self, session, TestProfiledContactPoint):
+            self, mock_get, session, TestProfiledContactPoint):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'phone'},
+                {'code': 'work'}
+            ]}
         post = TestProfiledContactPoint(
             id=1,
             contactpoint={

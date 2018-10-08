@@ -1,5 +1,8 @@
+from unittest.mock import patch
+
 import pytest
 
+from flask import Response
 from sqlalchemy import Column
 from sqlalchemy.exc import StatementError
 from sqlalchemy_utils import register_composites
@@ -19,8 +22,10 @@ class TestReference(object):
             reference = Column(ReferenceField())
         return TestReferenceModel
 
+    @patch('fhir_server.elements.base.reference_validator.requests.get')
     def test_post_data_with_external_reference(
-            self, session, TestReferenceModel):
+            self, mock_get, session, TestReferenceModel):
+        mock_get.return_value = Response(status=200)
         post = TestReferenceModel(
             id=1,
             reference={
@@ -150,8 +155,12 @@ class TestReference(object):
         assert not display[0].nullable
         assert not reference[0].nullable
 
+    @patch('fhir_server.elements.base.reference_validator.requests.get')
     def test_post_data_fields_present(
-            self, session, TestProfiledReference):
+            self, mock_get, session, TestProfiledReference):
+
+        mock_get.return_value = Response(status=200)
+
         post = TestProfiledReference(
             id=1,
             reference={

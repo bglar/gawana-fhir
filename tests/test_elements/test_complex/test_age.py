@@ -1,14 +1,13 @@
-import pytest
+from unittest.mock import patch
 
-from unittest.mock import patch, Mock
+import pytest
 
 from sqlalchemy import Column
 from sqlalchemy.exc import StatementError
 from sqlalchemy_utils import register_composites
 
 from fhir_server.elements import primitives
-from fhir_server.elements.complex.age import (
-    Age as AgeDef, AgeField)
+from fhir_server.elements.complex.age import AgeField
 
 
 class TestAge(object):

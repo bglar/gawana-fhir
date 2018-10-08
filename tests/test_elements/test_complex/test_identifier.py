@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 
 from sqlalchemy import Column
@@ -19,7 +21,14 @@ class TestIdentifier(object):
             identifier = Column(IdentifierField())
         return TestIdentifierModel
 
-    def test_post_data(self, session, TestIdentifierModel):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_post_data(self, mock_get, session, TestIdentifierModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'secondary'},
+                {'code': 'UDI'}
+            ]}
         post = TestIdentifierModel(
             id=1,
             identifier={
@@ -60,8 +69,12 @@ class TestIdentifier(object):
         assert get.id == 1
         assert get.identifier.assigner.display == 'Patient X'
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_with_use_not_in_valuesets(
-            self, session, TestIdentifierModel):
+            self, mock_get, session, TestIdentifierModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [{'code': 'UDI'}]}
         post = TestIdentifierModel(
             id=1,
             identifier={
@@ -99,8 +112,14 @@ class TestIdentifier(object):
             session.commit()
         assert 'The identifier use must be defined in' in str(excinfo.value)
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_with_type_code_not_in_valuesets(
-            self, session, TestIdentifierModel):
+            self, mock_get, session, TestIdentifierModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'secondary'}
+            ]}
         post = TestIdentifierModel(
             id=1,
             identifier={
@@ -139,8 +158,14 @@ class TestIdentifier(object):
         assert 'The identifier type must be defined in' in str(
             excinfo.value)
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_reject_data_if_identifier_value_not_unique(
-            self, session, TestIdentifierModel):
+            self, mock_get, session, TestIdentifierModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'secondary'}
+            ]}
         post = TestIdentifierModel(
             id=1,
             identifier={
@@ -263,8 +288,15 @@ class TestIdentifier(object):
         assert not period[0].nullable
         assert not ftype[0].nullable
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_fields_present(
-            self, session, TestProfiledIdentifier):
+            self, mock_get, session, TestProfiledIdentifier):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'secondary'},
+                {'code': 'UDI'}
+            ]}
         post = TestProfiledIdentifier(
             id=1,
             identifier={

@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 import jwt
 
@@ -19,7 +21,14 @@ class TestSignature(object):
             signature = Column(SignatureField())
         return TestSignatureModel
 
-    def test_post_data(self, session, TestSignatureModel):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_post_data(self, mock_get, session, TestSignatureModel):
+        mock_get.return_value.json.return_value = {
+            'count': 1,
+            'data': [
+                {'code': 'application/jwt'},
+                {'code': '1.2.840.10065.1.12.1.1'}
+            ]}
         post = TestSignatureModel(
             id=1,
             signature={
@@ -52,8 +61,15 @@ class TestSignature(object):
         assert get.id == 1
         assert get.signature.whoReference.display == 'Patient X'
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_reject_data_with_contentType_not_valid(
-            self, session, TestSignatureModel):
+            self, mock_get, session, TestSignatureModel):
+        mock_get.return_value.json.return_value = {
+            'count': 1,
+            'data': [
+                {'code': 'application/jwt'},
+                {'code': '1.2.840.10065.1.12.1.1'}
+            ]}
         post = TestSignatureModel(
             id=1,
             signature={
@@ -85,8 +101,15 @@ class TestSignature(object):
         assert 'The signature content type should be one of' in str(
             excinfo.value)
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_reject_invalid_jwt_blob(
-            self, session, TestSignatureModel):
+            self, mock_get, session, TestSignatureModel):
+        mock_get.return_value.json.return_value = {
+            'count': 1,
+            'data': [
+                {'code': 'application/jwt'},
+                {'code': '1.2.840.10065.1.12.1.1'}
+            ]}
         post = TestSignatureModel(
             id=1,
             signature={
@@ -151,8 +174,15 @@ class TestSignature(object):
         assert ('Field blob in column fhir_signature not '
                 'nullable') in str(excinfo.value)
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_post_data_with_type_code_not_defined_in_valueset(
-            self, session, TestSignatureModel):
+            self, mock_get, session, TestSignatureModel):
+        mock_get.return_value.json.return_value = {
+            'count': 1,
+            'data': [
+                {'code': 'application/jwt'},
+                {'code': '1.2.840.10065.1.12.1.1'}
+            ]}
         post = TestSignatureModel(
             id=1,
             signature={

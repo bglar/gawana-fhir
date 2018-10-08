@@ -20,22 +20,19 @@ class TestCodeField(object):
         with pytest.raises(TypeError) as excinfo:
             primitives.CodeField().process_bind_param('', 'postgres')
 
-        assert ('This Code is invalid') in str(
-            excinfo.value)
+        assert 'This Code:  is invalid' in str(excinfo.value)
 
     def test_code_no_leading_whitespaces(self):
         with pytest.raises(TypeError) as excinfo:
             primitives.CodeField().process_bind_param(' 2561-1hbw', 'postgres')
 
-        assert ('This Code is invalid') in str(
-            excinfo.value)
+        assert 'This Code:  2561-1hbw' in str(excinfo.value)
 
     def test_code_no_trailing_whitespaces(self):
         with pytest.raises(TypeError) as excinfo:
             primitives.CodeField().process_bind_param('2561-1hbw  ', 'postgres')
 
-        assert ('This Code is invalid') in str(
-            excinfo.value)
+        assert 'This Code: 2561-1hbw' in str(excinfo.value)
 
     def test_code_no_internal_whitespaces(self):
         with pytest.raises(TypeError) as err:
@@ -67,8 +64,7 @@ class TestCodeField(object):
         with pytest.raises(StatementError) as excinfo:
             session.commit()
 
-        assert ('This Code is invalid') in str(
-            excinfo.value)
+        assert 'This Code:  is invalid' in str(excinfo.value)
 
     def test_code_not_larger_than_1MB(self, session, TestDataTypesModel):
         large_str = 'abcde' * 1000000

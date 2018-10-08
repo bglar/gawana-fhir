@@ -1,13 +1,13 @@
 from decimal import Decimal
+from unittest.mock import patch
+
 import pytest
 
 from sqlalchemy import Column
-from sqlalchemy.exc import StatementError
 from sqlalchemy_utils import register_composites
 
 from fhir_server.elements import primitives
-from fhir_server.elements.complex.distance import (
-    Distance as DistanceDef, DistanceField)
+from fhir_server.elements.complex.distance import DistanceField
 
 
 class TestDistance(object):
@@ -20,7 +20,13 @@ class TestDistance(object):
             distance = Column(DistanceField())
         return TestDistanceModel
 
-    def test_post_data(self, session, TestDistanceModel):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_post_data(self, mock_get, session, TestDistanceModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': '<'}
+            ]}
         post = TestDistanceModel(
             id=1,
             distance={

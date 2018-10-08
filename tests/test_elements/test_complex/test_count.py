@@ -1,13 +1,13 @@
 from decimal import Decimal
+from unittest.mock import patch
+
 import pytest
 
 from sqlalchemy import Column
-from sqlalchemy.exc import StatementError
 from sqlalchemy_utils import register_composites
 
 from fhir_server.elements import primitives
-from fhir_server.elements.complex.count import (
-    Count as CountDef, CountField)
+from fhir_server.elements.complex.count import CountField
 
 
 class TestCount(object):
@@ -20,7 +20,13 @@ class TestCount(object):
             count = Column(CountField())
         return TestCountModel
 
-    def test_post_data(self, session, TestCountModel):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_post_data(self, mock_get, session, TestCountModel):
+        mock_get.return_value.json.return_value = {
+            'count': 1,
+            'data': [
+                {'code': '<'}
+            ]}
         post = TestCountModel(
             id=1,
             count={

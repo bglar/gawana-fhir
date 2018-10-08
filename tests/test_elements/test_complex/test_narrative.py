@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 
 from sqlalchemy import Column
@@ -17,7 +19,13 @@ class TestNarrative(object):
             narrative = Column(NarrativeField())
         return TestNarrativeModel
 
-    def test_post_data(self, session, TestNarrativeModel):
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
+    def test_post_data(self, mock_get, session, TestNarrativeModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'generated'}
+            ]}
         post = TestNarrativeModel(
             id=1,
             narrative={
@@ -38,8 +46,14 @@ class TestNarrative(object):
         assert get.id == 1
         assert get.narrative.status == 'generated'
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_reject_data_with_invalid_tags(
-            self, session, TestNarrativeModel):
+            self, mock_get, session, TestNarrativeModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'generated'}
+            ]}
         post = TestNarrativeModel(
             id=1,
             narrative={
@@ -60,8 +74,14 @@ class TestNarrative(object):
             session.commit()
         assert 'The tag lala is not valid' in str(excinfo.value)
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_reject_data_with_invalid_attributes(
-            self, session, TestNarrativeModel):
+            self, mock_get, session, TestNarrativeModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'generated'}
+            ]}
         post = TestNarrativeModel(
             id=1,
             narrative={
@@ -82,8 +102,14 @@ class TestNarrative(object):
             session.commit()
         assert 'The attribute noattr is not valid in' in str(excinfo.value)
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_reject_data_with_status_not_in_valuesets(
-            self, session, TestNarrativeModel):
+            self, mock_get, session, TestNarrativeModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'generated'}
+            ]}
         post = TestNarrativeModel(
             id=1,
             narrative={
@@ -104,8 +130,14 @@ class TestNarrative(object):
             session.commit()
         assert 'The narrative status must be defined in' in str(excinfo.value)
 
+    @patch('fhir_server.elements.base.cplxtype_validator.requests.get')
     def test_reject_content_containing_empty_string(
-            self, session, TestNarrativeModel):
+            self, mock_get, session, TestNarrativeModel):
+        mock_get.return_value.json.return_value = {
+            'count': 2,
+            'data': [
+                {'code': 'generated'}
+            ]}
         post = TestNarrativeModel(
             id=1,
             narrative={
