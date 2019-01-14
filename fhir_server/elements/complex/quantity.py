@@ -15,23 +15,18 @@ class SimpleQuantity(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('code', {'mini': 0, 'maxi': 1},
-                  primitives.CodeField, None),
-            # Coded form of the unit.
-
-            Field('system', {'mini': 0, 'maxi': 1},
-                  primitives.URIField, None),
-            # System that defines coded unit form.
-
-            Field('unit', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Unit representation.
-
-            Field('value', {'mini': 0, 'maxi': 1},
-                  primitives.DecimalField, None)
-            # Numerical value (with implicit precision).
-        ])
+        elm.extend(
+            [
+                Field("code", {"mini": 0, "maxi": 1}, primitives.CodeField, None),
+                # Coded form of the unit.
+                Field("system", {"mini": 0, "maxi": 1}, primitives.URIField, None),
+                # System that defines coded unit form.
+                Field("unit", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # Unit representation.
+                Field("value", {"mini": 0, "maxi": 1}, primitives.DecimalField, None)
+                # Numerical value (with implicit precision).
+            ]
+        )
         return elm
 
 
@@ -45,11 +40,12 @@ class Quantity(SimpleQuantity):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('comparator', {'mini': 0, 'maxi': 1},
-                  primitives.CodeField, None)
-            # < | <= | >= | > - how to understand the value.
-        ])
+        elm.extend(
+            [
+                Field("comparator", {"mini": 0, "maxi": 1}, primitives.CodeField, None)
+                # < | <= | >= | > - how to understand the value.
+            ]
+        )
         return elm
 
 

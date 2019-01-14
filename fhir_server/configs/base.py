@@ -15,12 +15,12 @@ class BaseConfig(object):
     TESTING = False
     PROD = False
 
-    ADMINS = ['brian.ogollah@gmail.com']
+    ADMINS = ["brian.ogollah@gmail.com"]
 
     # for session
-    SECRET_KEY = '172bb977-e752-4831-8959-2b87d1006669'
-    DOMAIN_NAME = 'localhost:5000'
-    API_ROOT = 'api'
+    SECRET_KEY = "172bb977-e752-4831-8959-2b87d1006669"
+    DOMAIN_NAME = "localhost:5000"
+    API_ROOT = "api"
 
 
 class DefaultConfig(BaseConfig):
@@ -28,32 +28,27 @@ class DefaultConfig(BaseConfig):
 
     TESTING = False
     CSRF_ENABLED = True
-    SECRET_KEY = '172bb977-e752-4831-8959-2b87d1006669'
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    SECRET_KEY = "172bb977-e752-4831-8959-2b87d1006669"
+    SQLALCHEMY_DATABASE_URI = os.environ["DATABASE_URL"]
 
     # redis
     REDIS_CONFIG = {
-        'HOST': 'TEST_REDIS_HOST',
-        'PORT': '2953',
-        'CELERY_DB': '0',
-        'CACHE_DB': '1'
+        "HOST": "TEST_REDIS_HOST",
+        "PORT": "2953",
+        "CELERY_DB": "0",
+        "CACHE_DB": "1",
     }
 
     # celery config
-    CELERY_BROKER_URL = 'redis://%s:%s/0' % (
-        REDIS_CONFIG['HOST'], REDIS_CONFIG['PORT']
+    CELERY_BROKER_URL = "redis://%s:%s/0" % (REDIS_CONFIG["HOST"], REDIS_CONFIG["PORT"])
+    CELERY_RESULT_BACKEND = "redis://%s:%s/0" % (
+        REDIS_CONFIG["HOST"],
+        REDIS_CONFIG["PORT"],
     )
-    CELERY_RESULT_BACKEND = 'redis://%s:%s/0' % (
-        REDIS_CONFIG['HOST'], REDIS_CONFIG['PORT']
-    )
-    CELERY_RESULT_ENGINE_OPTIONS = {
-        "pool_recycle": 7200, 'echo': True
-    }
+    CELERY_RESULT_ENGINE_OPTIONS = {"pool_recycle": 7200, "echo": True}
 
     # Oauth2
-    OAUTH2_CONFIG = {
-        'OAUTH2_PROVIDER_TOKEN_EXPIRES_IN': 3600
-    }
+    OAUTH2_CONFIG = {"OAUTH2_PROVIDER_TOKEN_EXPIRES_IN": 3600}
 
 
 class ProductionConfig(DefaultConfig):
@@ -61,7 +56,7 @@ class ProductionConfig(DefaultConfig):
 
 
 class StagingConfig(DefaultConfig):
-    DOMAIN_NAME = 'localhost:5000'
+    DOMAIN_NAME = "localhost:5000"
     DEVELOPMENT = True
     DEBUG = True
 
@@ -72,16 +67,16 @@ class DevelopmentConfig(DefaultConfig):
 
 
 class TestingConfig(BaseConfig):
-    DOMAIN_NAME = 'localhost:5000'
+    DOMAIN_NAME = "localhost:5000"
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ['TEST_DATABASE_URL']
+    SQLALCHEMY_DATABASE_URI = os.environ["TEST_DATABASE_URL"]
 
 
 def get_config(MODE):
     SWITCH = {
-        'DEVELOPMENT': DevelopmentConfig,
-        'STAGING': StagingConfig,
-        'PRODUCTION': ProductionConfig
+        "DEVELOPMENT": DevelopmentConfig,
+        "STAGING": StagingConfig,
+        "PRODUCTION": ProductionConfig,
     }
 
     return SWITCH[MODE]

@@ -7,7 +7,7 @@ from fhir_server.configs import (
     PRACTITIONER_ROLE_URL,
     PRACTITIONER_SPECIALITY_URL,
     ANZSCO_OCCUPATIONS_URL,
-    LANGUAGE_URI
+    LANGUAGE_URI,
 )
 from fhir_server.elements import primitives, complex
 from fhir_server.elements.base.backboneelement import BackboneElement
@@ -23,41 +23,60 @@ class PractitionerPractitionerRole(BackboneElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('organization', {'mini': 0, 'maxi': 1},
-                  complex.ReferenceField(), 'Organization'),
-            # Organization where the roles are performed.
-
-            Field('role', {'mini': 0, 'maxi': 1},
-                  complex.CodeableConceptField(), None),
-            # Roles which this practitioner may perform.
-
-            Field('specialty', {'mini': 0, 'maxi': -1},
-                  complex.CodeableConceptField(), None),
-            # Specific specialty of the practitioner.
-
-            Field('identifier', {'mini': 0, 'maxi': -1},
-                  complex.IdentifierField(), None),
-            # Business Identifiers that are specific to a role / location
-
-            Field('telecom', {'mini': 0, 'maxi': -1},
-                  complex.ContactPointField(), None),
-            # Contact details that are specific to the role/location/service
-
-            Field('period', {'mini': 0, 'maxi': 1},
-                  complex.PeriodField(), None),
-            # The period during which the practitioner is authorized
-            # to perform in these role(s).
-
-            Field('location', {'mini': 0, 'maxi': -1},
-                  complex.ReferenceField(), 'Location'),
-            # The location(s) at which this practitioner provides care.
-
-            Field('healthcareService', {'mini': 0, 'maxi': -1},
-                  complex.ReferenceField(), 'HealthcareService')
-            # The list of healthcare services that this worker
-            # provides for this role's Organization/Location(s).
-        ])
+        elm.extend(
+            [
+                Field(
+                    "organization",
+                    {"mini": 0, "maxi": 1},
+                    complex.ReferenceField(),
+                    "Organization",
+                ),
+                # Organization where the roles are performed.
+                Field(
+                    "role", {"mini": 0, "maxi": 1}, complex.CodeableConceptField(), None
+                ),
+                # Roles which this practitioner may perform.
+                Field(
+                    "specialty",
+                    {"mini": 0, "maxi": -1},
+                    complex.CodeableConceptField(),
+                    None,
+                ),
+                # Specific specialty of the practitioner.
+                Field(
+                    "identifier",
+                    {"mini": 0, "maxi": -1},
+                    complex.IdentifierField(),
+                    None,
+                ),
+                # Business Identifiers that are specific to a role / location
+                Field(
+                    "telecom",
+                    {"mini": 0, "maxi": -1},
+                    complex.ContactPointField(),
+                    None,
+                ),
+                # Contact details that are specific to the role/location/service
+                Field("period", {"mini": 0, "maxi": 1}, complex.PeriodField(), None),
+                # The period during which the practitioner is authorized
+                # to perform in these role(s).
+                Field(
+                    "location",
+                    {"mini": 0, "maxi": -1},
+                    complex.ReferenceField(),
+                    "Location",
+                ),
+                # The location(s) at which this practitioner provides care.
+                Field(
+                    "healthcareService",
+                    {"mini": 0, "maxi": -1},
+                    complex.ReferenceField(),
+                    "HealthcareService",
+                )
+                # The list of healthcare services that this worker
+                # provides for this role's Organization/Location(s).
+            ]
+        )
         return elm
 
 
@@ -70,23 +89,30 @@ class PractitionerQualification(BackboneElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('identifier', {'mini': 0, 'maxi': -1},
-                  complex.IdentifierField(), None),
-            # An identifier for this qualification for the practitioner.
-
-            Field('code', {'mini': 1, 'maxi': 1},
-                  complex.CodeableConceptField(), None),
-            # Coded representation of the qualification.
-
-            Field('period', {'mini': 0, 'maxi': 1},
-                  complex.PeriodField(), None),
-            # Period during which the qualification is valid.
-
-            Field('issuer', {'mini': 0, 'maxi': 1},
-                  complex.ReferenceField(), 'Organization')
-            # Organization that regulates and issues the qualification.
-        ])
+        elm.extend(
+            [
+                Field(
+                    "identifier",
+                    {"mini": 0, "maxi": -1},
+                    complex.IdentifierField(),
+                    None,
+                ),
+                # An identifier for this qualification for the practitioner.
+                Field(
+                    "code", {"mini": 1, "maxi": 1}, complex.CodeableConceptField(), None
+                ),
+                # Coded representation of the qualification.
+                Field("period", {"mini": 0, "maxi": 1}, complex.PeriodField(), None),
+                # Period during which the qualification is valid.
+                Field(
+                    "issuer",
+                    {"mini": 0, "maxi": 1},
+                    complex.ReferenceField(),
+                    "Organization",
+                )
+                # Organization that regulates and issues the qualification.
+            ]
+        )
         return elm
 
 
@@ -134,50 +160,46 @@ class Practitioner(DomainResource):
     qualification = Column(Array(PractitionerQualificationField()))
     # Qualifications obtained by training and certification.
 
-    @validates('gender')
+    @validates("gender")
     def validate_practitioner_gender(self, key, gender):
-        url = ADMINISTRATIVE_GENDER_URL + '?code=' + gender
-        self.validate_valuesets(gender, url, 'practitioner gender')
+        url = ADMINISTRATIVE_GENDER_URL + "?code=" + gender
+        self.validate_valuesets(gender, url, "practitioner gender")
 
         return gender
 
-    @validates('role')
+    @validates("role")
     def validate_practitioner_role(self, key, role):
         for data in role:
-            role = data.get('role')
-            specialities = data.get('speciality')
+            role = data.get("role")
+            specialities = data.get("speciality")
 
-            msg1 = 'practitioner qualification'
-            self.code_fields_validator(specialities,
-                                       PRACTITIONER_SPECIALITY_URL, msg1)
+            msg1 = "practitioner qualification"
+            self.code_fields_validator(specialities, PRACTITIONER_SPECIALITY_URL, msg1)
 
-            msg2 = 'practitioner qualification'
+            msg2 = "practitioner qualification"
             self.code_fields_validator(role, PRACTITIONER_ROLE_URL, msg2)
 
         return role
 
-    @validates('qualification')
+    @validates("qualification")
     def validate_qualification(self, key, qualification):
         for data in qualification:
-            code = data.get('code')
-            msg = 'practitioner qualification'
+            code = data.get("code")
+            msg = "practitioner qualification"
             self.code_fields_validator(code, ANZSCO_OCCUPATIONS_URL, msg)
 
         return qualification
 
-    @validates('communication')
+    @validates("communication")
     def validate_communication(self, key, communication):
-        msg = 'practitioner communication'
+        msg = "practitioner communication"
         self.code_fields_validator(communication, LANGUAGE_URI, msg)
 
         return communication
 
     def _resource_summary(self):
-        summary_fields = ['id', 'meta', 'identifier', 'name', ]
-        return {
-            'repr': '%r' % self.name,
-            'fields': summary_fields
-        }
+        summary_fields = ["id", "meta", "identifier", "name"]
+        return {"repr": "%r" % self.name, "fields": summary_fields}
 
     def __repr__(self):
-        return '<Practitioner %r>' % self.name
+        return "<Practitioner %r>" % self.name

@@ -1,5 +1,4 @@
-from sqlalchemy_utils import (
-    CompositeType, CompositeArray)
+from sqlalchemy_utils import CompositeType, CompositeArray
 from sqlalchemy.types import TypeDecorator
 
 from .cplxtype_validator import CompositeValidator
@@ -84,8 +83,7 @@ class PgComposite(CompositeType):
                         values[i][field] = None
 
                 if isinstance(data.type, PgComposite):  # pragma: no cover
-                    values[i][field] = self.nested_composite(
-                        data, values[i][field])
+                    values[i][field] = self.nested_composite(data, values[i][field])
 
         # for val in values:
         for i, val in enumerate(values):
@@ -98,12 +96,12 @@ class PgComposite(CompositeType):
                         col_type = fields[v]
                         val[v] = self.nested_composite_array(col_type, val[v])
 
-            if values[i]:   # pragma: no cover
+            if values[i]:  # pragma: no cover
                 new_value.append(column.type.item_type.type_cls(**values[i]))
 
         if len(new_value) > 0:  # pragma: no cover
             new_value = new_value
-        else:   # pragma: no cover
+        else:  # pragma: no cover
             new_value = None
 
         return new_value
@@ -143,17 +141,16 @@ class PgComposite(CompositeType):
                         new_value.append(getattr(value, column.name))
                 except Exception:
                     # VALIDATE IF NULLABLE IS TRUE OR FALSE
-                    if not(column.nullable):
+                    if not (column.nullable):
                         errors.append(
-                            "Field %s in column %s not nullable" % (
-                                column.name, self.name))
+                            "Field %s in column %s not nullable"
+                            % (column.name, self.name)
+                        )
                     new_value.append(None)
 
                 if isinstance(column.type, TypeDecorator):
                     processed_value.append(
-                        column.type.process_bind_param(
-                            new_value[i], dialect
-                        )
+                        column.type.process_bind_param(new_value[i], dialect)
                     )
                 elif isinstance(column.type, PgComposite):
                     val = self.nested_composite(column, new_value[i])
@@ -171,6 +168,7 @@ class PgComposite(CompositeType):
 
             result = self.validate_col_data(self.type_cls(*processed_value))
             return result
+
         return process
 
     def result_processor(self, dialect, coltype):

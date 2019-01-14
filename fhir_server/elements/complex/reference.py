@@ -15,15 +15,14 @@ class Reference(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('display', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Text alternative for the resource.
-
-            Field('reference', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None)
-            # Relative, internal or absolute URL reference.
-        ])
+        elm.extend(
+            [
+                Field("display", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # Text alternative for the resource.
+                Field("reference", {"mini": 0, "maxi": 1}, primitives.StringField, None)
+                # Relative, internal or absolute URL reference.
+            ]
+        )
         return elm
 
 

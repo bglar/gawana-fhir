@@ -17,30 +17,30 @@ class Identifier(ComplexElement):
 
     A technical identifier - identifies some entity uniquely and unambiguously.
     """
+
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('system', {'mini': 0, 'maxi': 1}, primitives.URIField, None),
-            # The namespace for the identifier.
-
-            Field('use', {'mini': 0, 'maxi': 1}, primitives.CodeField, None),
-            # usual | official | temp | secondary (If known).
-
-            Field('value', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # The value that is unique.
-
-            Field('assigner', {'mini': 0, 'maxi': 1},
-                  ReferenceField(), ['Organization']),
-            # Organization that issued id (may be just text).
-
-            Field('period', {'mini': 0, 'maxi': 1}, PeriodField(), None),
-            # Time period when id is/was valid for use.
-
-            Field('type', {'mini': 0, 'maxi': 1},
-                  CodeableConceptField(), None),
-            # Description of identifier.
-        ])
+        elm.extend(
+            [
+                Field("system", {"mini": 0, "maxi": 1}, primitives.URIField, None),
+                # The namespace for the identifier.
+                Field("use", {"mini": 0, "maxi": 1}, primitives.CodeField, None),
+                # usual | official | temp | secondary (If known).
+                Field("value", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # The value that is unique.
+                Field(
+                    "assigner",
+                    {"mini": 0, "maxi": 1},
+                    ReferenceField(),
+                    ["Organization"],
+                ),
+                # Organization that issued id (may be just text).
+                Field("period", {"mini": 0, "maxi": 1}, PeriodField(), None),
+                # Time period when id is/was valid for use.
+                Field("type", {"mini": 0, "maxi": 1}, CodeableConceptField(), None),
+                # Description of identifier.
+            ]
+        )
         return elm
 
 

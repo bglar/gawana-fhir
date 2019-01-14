@@ -12,9 +12,9 @@ def validate_valuesets(code_value, url, response):
     #             url, resp.status_code))
 
     # TODO optimize this validation
-    if 'data' in resp.json():
-        for value in resp.json()['data']:
-            if value['code'] == code_value:
+    if "data" in resp.json():
+        for value in resp.json()["data"]:
+            if value["code"] == code_value:
                 return
 
-    raise TypeError(f'The {response} must be defined in {url}')
+    raise TypeError(f"The {response} must be defined in {url}")

@@ -11,7 +11,7 @@ from fhir_server.configs import (
     ANIMAL_BREEDS_URL,
     GENDER_STATUS_URL,
     LINK_TYPE_URL,
-    LANGUAGE_URI
+    LANGUAGE_URI,
 )
 from fhir_server.elements import primitives, complex
 from fhir_server.elements.base.backboneelement import BackboneElement
@@ -27,19 +27,31 @@ class PatientAnimal(BackboneElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('breed', {'mini': 0, 'maxi': 1},
-                  complex.CodeableConceptField(), None),
-            # E.g. Poodle, Angus
-
-            Field('genderStatus', {'mini': 0, 'maxi': 1},
-                  complex.CodeableConceptField(), None),
-            # E.g. Neutered, Intact
-
-            Field('species', {'mini': 1, 'maxi': 1},
-                  complex.CodeableConceptField(), None),
-            # E.g. Dog, Cow
-        ])
+        elm.extend(
+            [
+                Field(
+                    "breed",
+                    {"mini": 0, "maxi": 1},
+                    complex.CodeableConceptField(),
+                    None,
+                ),
+                # E.g. Poodle, Angus
+                Field(
+                    "genderStatus",
+                    {"mini": 0, "maxi": 1},
+                    complex.CodeableConceptField(),
+                    None,
+                ),
+                # E.g. Neutered, Intact
+                Field(
+                    "species",
+                    {"mini": 1, "maxi": 1},
+                    complex.CodeableConceptField(),
+                    None,
+                ),
+                # E.g. Dog, Cow
+            ]
+        )
         return elm
 
 
@@ -56,16 +68,22 @@ class PatientCommunication(BackboneElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('language', {'mini': 1, 'maxi': 1},
-                  complex.CodeableConceptField(), None),
-            # The language which can be used to communicate with the
-            # patient about his or her health
-
-            Field('preferred', {'mini': 0, 'maxi': 1},
-                  primitives.BooleanField, None),
-            # Language preference indicator
-        ])
+        elm.extend(
+            [
+                Field(
+                    "language",
+                    {"mini": 1, "maxi": 1},
+                    complex.CodeableConceptField(),
+                    None,
+                ),
+                # The language which can be used to communicate with the
+                # patient about his or her health
+                Field(
+                    "preferred", {"mini": 0, "maxi": 1}, primitives.BooleanField, None
+                ),
+                # Language preference indicator
+            ]
+        )
         return elm
 
 
@@ -78,36 +96,40 @@ class PatientContact(BackboneElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('relationship', {'mini': 0, 'maxi': -1},
-                  complex.CodeableConceptField(), None),
-            # The kind of relationship
-
-            Field('name', {'mini': 0, 'maxi': 1},
-                  complex.HumanNameField(), None),
-            # A name associated with the contact person
-
-            Field('telecom', {'mini': 0, 'maxi': -1},
-                  complex.ContactPointField(), None),
-            # A contact detail for the person
-
-            Field('address', {'mini': 0, 'maxi': 1},
-                  complex.AddressField(), None),
-            # Address for the contact person
-
-            Field('gender', {'mini': 0, 'maxi': 1},
-                  primitives.CodeField, None),
-            # male | female | other | unknown
-
-            Field('organization', {'mini': 0, 'maxi': 1},
-                  complex.ReferenceField(), 'Organization'),
-            # Organization that is associated with the contact
-
-            Field('period', {'mini': 0, 'maxi': 1},
-                  complex.PeriodField(), None),
-            # The period during which this contact person or organization
-            # is valid to be contacted relating to this patient
-        ])
+        elm.extend(
+            [
+                Field(
+                    "relationship",
+                    {"mini": 0, "maxi": -1},
+                    complex.CodeableConceptField(),
+                    None,
+                ),
+                # The kind of relationship
+                Field("name", {"mini": 0, "maxi": 1}, complex.HumanNameField(), None),
+                # A name associated with the contact person
+                Field(
+                    "telecom",
+                    {"mini": 0, "maxi": -1},
+                    complex.ContactPointField(),
+                    None,
+                ),
+                # A contact detail for the person
+                Field("address", {"mini": 0, "maxi": 1}, complex.AddressField(), None),
+                # Address for the contact person
+                Field("gender", {"mini": 0, "maxi": 1}, primitives.CodeField, None),
+                # male | female | other | unknown
+                Field(
+                    "organization",
+                    {"mini": 0, "maxi": 1},
+                    complex.ReferenceField(),
+                    "Organization",
+                ),
+                # Organization that is associated with the contact
+                Field("period", {"mini": 0, "maxi": 1}, complex.PeriodField(), None),
+                # The period during which this contact person or organization
+                # is valid to be contacted relating to this patient
+            ]
+        )
         return elm
 
 
@@ -122,16 +144,16 @@ class PatientLink(BackboneElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('other', {'mini': 1, 'maxi': 1},
-                  complex.ReferenceField(), 'Patient'),
-            # The other patient resource that the link refers to
-
-            Field('type', {'mini': 1, 'maxi': 1},
-                  primitives.CodeField, None),
-            # replace | refer | seealso - type of link
-
-        ])
+        elm.extend(
+            [
+                Field(
+                    "other", {"mini": 1, "maxi": 1}, complex.ReferenceField(), "Patient"
+                ),
+                # The other patient resource that the link refers to
+                Field("type", {"mini": 1, "maxi": 1}, primitives.CodeField, None),
+                # replace | refer | seealso - type of link
+            ]
+        )
         return elm
 
 
@@ -145,6 +167,7 @@ class Patient(DomainResource):
     Demographics and other administrative information about an individual or
     animal receiving care or other health-related services.
     """
+
     active = Column(primitives.BooleanField)
     # Whether this patient's record is in active use
 
@@ -216,10 +239,10 @@ class Patient(DomainResource):
         return {
             "careProvider": "Organization|Practitioner",
             "managingOrganization": "Organization",
-            "generalPractitioner": "Organization|Practitioner"
+            "generalPractitioner": "Organization|Practitioner",
         }
 
-    @validates('careProvider', 'managingOrganization', 'generalPractitioner')
+    @validates("careProvider", "managingOrganization", "generalPractitioner")
     def reference_fields(self, key, field):
         """Validates multiple reference fields.
 
@@ -238,88 +261,85 @@ class Patient(DomainResource):
 
         return field
 
-    @validates('gender')
+    @validates("gender")
     def validate_patient_gender(self, key, gender):
-        msg = 'patient gender'
+        msg = "patient gender"
         self.code_fields_validator(gender, ADMINISTRATIVE_GENDER_URL, msg)
 
         return gender
 
-    @validates('maritalStatus')
+    @validates("maritalStatus")
     def validate_marital_status(self, key, maritalStatus):
-        msg = 'patient marital status code'
+        msg = "patient marital status code"
         self.code_fields_validator(maritalStatus, MARITAL_STATUS_URL, msg)
 
         return maritalStatus
 
-    @validates('contact')
+    @validates("contact")
     def validate_patient_contact(self, key, contact):
         if contact:
             for data in contact:
-                relationships = data.get('relationship')
-                gender = data.get('gender')
+                relationships = data.get("relationship")
+                gender = data.get("gender")
 
-                msg1 = 'patient contact gender'
-                self.code_fields_validator(
-                    gender, ADMINISTRATIVE_GENDER_URL, msg1)
+                msg1 = "patient contact gender"
+                self.code_fields_validator(gender, ADMINISTRATIVE_GENDER_URL, msg1)
 
-                msg2 = 'patient contact relationship'
+                msg2 = "patient contact relationship"
                 self.code_fields_validator(
-                    relationships, PATIENT_CONTACT_RELATIONSHIP_URL, msg2)
+                    relationships, PATIENT_CONTACT_RELATIONSHIP_URL, msg2
+                )
 
         return contact
 
-    @validates('animal')
+    @validates("animal")
     def validate_animal(self, key, animal):
         if animal:
-            species = animal.get('species')
-            msg1 = 'patient animal species'
+            species = animal.get("species")
+            msg1 = "patient animal species"
             self.code_fields_validator(species, ANIMAL_SPECIES_URL, msg1)
 
-            breed = animal.get('breed')
-            msg2 = 'patient animal breed'
+            breed = animal.get("breed")
+            msg2 = "patient animal breed"
             self.code_fields_validator(breed, ANIMAL_BREEDS_URL, msg2)
 
-            gender_status = animal.get('genderStatus')
-            msg3 = 'patient animal gender status'
+            gender_status = animal.get("genderStatus")
+            msg3 = "patient animal gender status"
             self.code_fields_validator(gender_status, GENDER_STATUS_URL, msg3)
 
         return animal
 
-    @validates('communication')
+    @validates("communication")
     def validate_communication(self, key, communication):
         if communication:
             for data in communication:
-                language = data.get('language')
-                msg = 'patient communication language'
+                language = data.get("language")
+                msg = "patient communication language"
                 self.code_fields_validator(language, LANGUAGE_URI, msg)
 
         return communication
 
-    @validates('link')
+    @validates("link")
     def validate_link(self, key, link):
         if link:
             for data in link:
-                link_type = data.get('type')
-                msg = 'patient link type'
+                link_type = data.get("type")
+                msg = "patient link type"
                 self.code_fields_validator(link_type, LINK_TYPE_URL, msg)
 
         return link
 
     def _resource_summary(self):
-        summary_fields = ['id', 'meta', 'identifier', 'name', ]
+        summary_fields = ["id", "meta", "identifier", "name"]
 
         try:
             patient_text = self.name
         except AttributeError:
             patient_text = None
-        return {
-            'repr': '%r' % patient_text,
-            'fields': summary_fields
-        }
+        return {"repr": "%r" % patient_text, "fields": summary_fields}
 
     def __repr__(self):
         if self.name:
-            return '<Patient %r>' % self.name
+            return "<Patient %r>" % self.name
         else:
-            return '<Patient None>'
+            return "<Patient None>"

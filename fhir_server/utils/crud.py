@@ -17,7 +17,7 @@ def unpack_resource_helper(resource, resource_instance):
     if isinstance(resource_instance, list):
         for entry in resource_instance:
             for key in entry.keys():
-                if key != 'resource_changed':
+                if key != "resource_changed":
                     kwargs[key] = entry[key]
 
                     if isinstance(kwargs[key], tuple):
@@ -27,7 +27,7 @@ def unpack_resource_helper(resource, resource_instance):
         return list_data
 
     for key in resource_instance.keys():
-        if key != 'resource_changed':
+        if key != "resource_changed":
             kwargs[key] = resource_instance[key]
 
     return resource(**kwargs)
@@ -45,13 +45,15 @@ def tag_summary_resource(instance):
     """
 
     if instance.meta:
-        subset = instance.meta._replace(tag=[
-            {
-                "system": "http://hl7.org/fhir/v3/ObservationValue",
-                "code": "SUBSETTED",
-                "display": "Resource encoded in summary mode"
-            }
-        ])
+        subset = instance.meta._replace(
+            tag=[
+                {
+                    "system": "http://hl7.org/fhir/v3/ObservationValue",
+                    "code": "SUBSETTED",
+                    "display": "Resource encoded in summary mode",
+                }
+            ]
+        )
         instance.meta = subset
     return instance
 
@@ -69,7 +71,8 @@ class CRUDMixin(object):
         query = Organization.get_or_404(str(key))
         data = Organization.update(query, **(request.data))
     """
-    __table_args__ = {'extend_existing': True}
+
+    __table_args__ = {"extend_existing": True}
 
     @classmethod
     def create(cls, **kwargs):
@@ -81,8 +84,8 @@ class CRUDMixin(object):
 
         # Delete the `resourceType` entry. It is unwanted in the models but
         # client can provide to communicate the resourceType being manipulated
-        if 'resourceType' in kwargs:
-            del kwargs['resourceType']
+        if "resourceType" in kwargs:
+            del kwargs["resourceType"]
 
         # create resource instance and call save to add to and commit session
         record = cls(**kwargs)
@@ -114,10 +117,11 @@ class CRUDMixin(object):
             if key not in resource_fields:
                 filter_params.pop(key)
 
-        filter_params['is_deleted'] = False
+        filter_params["is_deleted"] = False
         count = cls.query.filter_by(**filter_params).count()
-        result = cls.query.filter_by(**filter_params).paginate(
-            page, per_page, False).items
+        result = (
+            cls.query.filter_by(**filter_params).paginate(page, per_page, False).items
+        )
 
         if len(result) > 1:
             # 412 Precondition Failed error indicating the client's
@@ -148,7 +152,9 @@ class CRUDMixin(object):
 
         qq_history = text(
             "SELECT * FROM \"{0}_history\" WHERE (id::text='{1}'::text)".format(
-                cls.__tablename__, id))
+                cls.__tablename__, id
+            )
+        )
         history_model = db.session.execute(qq_history).first()
         base_deleted = cls.query.filter_by(id=id, is_deleted=True).first()
 
@@ -174,30 +180,36 @@ class CRUDMixin(object):
         :return The result:
         """
         qq = text(
-            "SELECT * FROM \"{0}\" WHERE ("
+            'SELECT * FROM "{0}" WHERE ('
             "(\"{0}\".meta).versionId)::text='{1}'::text AND "
-            "\"{0}\".id::text='{2}'::text AND \"{0}\".is_deleted={3}".format(
-                cls.__tablename__, vid, key, include_deleted))
+            '"{0}".id::text=\'{2}\'::text AND "{0}".is_deleted={3}'.format(
+                cls.__tablename__, vid, key, include_deleted
+            )
+        )
 
         qq_history = text(
-            "SELECT * FROM \"{0}_history\" WHERE ("
+            'SELECT * FROM "{0}_history" WHERE ('
             "(\"{0}_history\".meta).versionId)::text='{1}'::text AND "
             "\"{0}_history\".id::text='{2}'::text AND "
-            "\"{0}_history\".is_deleted={3}".format(
-                cls.__tablename__, vid, key, include_deleted))
+            '"{0}_history".is_deleted={3}'.format(
+                cls.__tablename__, vid, key, include_deleted
+            )
+        )
 
         qq_deleted_history = text(
-            "SELECT * FROM \"{0}_history\" WHERE ("
+            'SELECT * FROM "{0}_history" WHERE ('
             "(\"{0}_history\".meta).versionId)::text='{1}'::text AND "
             "\"{0}_history\".id::text='{2}'::text AND "
-            "\"{0}_history\".is_deleted=True".format(
-                cls.__tablename__, vid, key))
+            '"{0}_history".is_deleted=True'.format(cls.__tablename__, vid, key)
+        )
 
         qq_deleted_base = text(
-            "SELECT * FROM \"{0}\" WHERE ("
+            'SELECT * FROM "{0}" WHERE ('
             "(\"{0}\".meta).versionId)::text='{1}'::text AND "
-            "\"{0}\".id::text='{2}'::text AND \"{0}\".is_deleted=True".format(
-                cls.__tablename__, vid, key))
+            '"{0}".id::text=\'{2}\'::text AND "{0}".is_deleted=True'.format(
+                cls.__tablename__, vid, key
+            )
+        )
 
         base_model = db.session.execute(qq).first()
         history_model = db.session.execute(qq_history).first()
@@ -236,7 +248,7 @@ class CRUDMixin(object):
 
         :return summarised resource instance:
         """
-        if summary == 'data':
+        if summary == "data":
             # Removes the text element
             result, status_code = cls.get_by_id(id)
             result.text = None
@@ -244,33 +256,34 @@ class CRUDMixin(object):
             subset = tag_summary_resource(result)
             return subset, status_code
 
-        elif summary == 'text':
+        elif summary == "text":
             # Return only the "text" element, and any mandatory elements
             qq = text(
-                "SELECT \"{0}\".id, \"{0}\".meta, \"{0}\".text "
-                "FROM \"{0}\" WHERE \"{0}\".id::text='{1}'::text "
-                "AND \"{0}\".is_deleted=False".format(cls.__tablename__, id))
+                'SELECT "{0}".id, "{0}".meta, "{0}".text '
+                'FROM "{0}" WHERE "{0}".id::text=\'{1}\'::text '
+                'AND "{0}".is_deleted=False'.format(cls.__tablename__, id)
+            )
             base_model = db.session.execute(qq).first()
 
             result = unpack_resource_helper(cls, base_model)
             subset = tag_summary_resource(result)
             return subset, 200
 
-        elif summary == 'false':
+        elif summary == "false":
             # Return all parts of the resource(s)
             result, status_code = cls.get_by_id(id)
             subset = tag_summary_resource(result)
             return subset, status_code
 
-        elif summary == 'true':
+        elif summary == "true":
             # Return only those elements marked as "summary" in the base
             # definition of the resource(s)
-            summary_fields = cls._resource_summary(cls)['fields']
-            str_fields = ', '.join(map(str, summary_fields))
+            summary_fields = cls._resource_summary(cls)["fields"]
+            str_fields = ", ".join(map(str, summary_fields))
             qq = text(
-                "SELECT {2} FROM \"{0}\" WHERE \"{0}\".id::text='{1}'::text"
-                " AND \"{0}\".is_deleted=False".format(
-                    cls.__tablename__, id, str_fields))
+                'SELECT {2} FROM "{0}" WHERE "{0}".id::text=\'{1}\'::text'
+                ' AND "{0}".is_deleted=False'.format(cls.__tablename__, id, str_fields)
+            )
             base_model = db.session.execute(qq).first()
 
             result = unpack_resource_helper(cls, base_model)
@@ -290,20 +303,21 @@ class CRUDMixin(object):
         """
         if key:
             history = text(
-                "SELECT * FROM \"{0}_history\" WHERE \"{0}_history\".id::text="
-                "'{1}' AND is_deleted=False".format(cls.__tablename__, key))
+                'SELECT * FROM "{0}_history" WHERE "{0}_history".id::text='
+                "'{1}' AND is_deleted=False".format(cls.__tablename__, key)
+            )
 
             base = text(
-                "SELECT * FROM \"{0}\" WHERE \"{0}\".id::text='{1}' AND "
-                "is_deleted=False".format(cls.__tablename__, key))
+                'SELECT * FROM "{0}" WHERE "{0}".id::text=\'{1}\' AND '
+                "is_deleted=False".format(cls.__tablename__, key)
+            )
 
             history_model = db.session.execute(history).fetchall()
             base_model = db.session.execute(base).fetchall()
 
             history_model.extend(base_model)
         else:
-            qq_history = text(
-                "SELECT * FROM \"{0}_history\"".format(cls.__tablename__))
+            qq_history = text('SELECT * FROM "{0}_history"'.format(cls.__tablename__))
             history_model = db.session.execute(qq_history).fetchall()
 
         if history_model:
@@ -318,20 +332,31 @@ class CRUDMixin(object):
         :param kwargs:
         """
         cols = self.__table__.columns.keys()
-        col_names = [name for name in cols if name not in [
-            'id', 'resource_version', 'created_at', 'updated_at',
-            'deleted_at', 'is_deleted']]
+        col_names = [
+            name
+            for name in cols
+            if name
+            not in [
+                "id",
+                "resource_version",
+                "created_at",
+                "updated_at",
+                "deleted_at",
+                "is_deleted",
+            ]
+        ]
 
         # Delete the `resourceType` entry. It is unwanted in the models but
         # client can provide to communicate the resourceType being manipulated
-        if 'resourceType' in kwargs:
-            del kwargs['resourceType']
+        if "resourceType" in kwargs:
+            del kwargs["resourceType"]
 
         for attr, value in kwargs.items():
             # check if updated columns are not in the resource
             # and reject the operation
-            assert attr in cols, (
-                'Field \"{0}\" is not a column in this resource'.format(attr))
+            assert attr in cols, 'Field "{0}" is not a column in this resource'.format(
+                attr
+            )
 
         if patch:
             # PATCH the resource
@@ -346,14 +371,14 @@ class CRUDMixin(object):
             # FHIR update through PUT can bring a deleted resource back to life.
             # That is the default behaviour here to mark resource as not
             # deleted. If it is deleted there is a check below to mark it.
-            setattr(self, 'is_deleted', False)
+            setattr(self, "is_deleted", False)
 
-            if kwargs.get('is_deleted'):
+            if kwargs.get("is_deleted"):
                 # These fields are extracted to accommodate most PUT operations.
                 # A delete would put `deleted_at` and `is_deleted` so we need
                 # to explicitly add them here.
-                setattr(self, 'is_deleted', kwargs.get('is_deleted'))
-                setattr(self, 'deleted_at', kwargs.get('deleted_at'))
+                setattr(self, "is_deleted", kwargs.get("is_deleted"))
+                setattr(self, "deleted_at", kwargs.get("deleted_at"))
 
         self.save()
         return self, 200
@@ -390,13 +415,11 @@ class CRUDMixin(object):
         # Soft delete
         else:
             now = datetime.now(timezone.utc)
-            str_now = datetime.strftime(now, '%Y-%m-%dT%H:%M:%S%z')
+            str_now = datetime.strftime(now, "%Y-%m-%dT%H:%M:%S%z")
             data = {
                 "is_deleted": delete,
                 "deleted_at": str_now if delete else None,
-                "meta": {
-                    "lastUpdated": str_now
-                }
+                "meta": {"lastUpdated": str_now},
             }
             self.update(**data)
         return self, 204

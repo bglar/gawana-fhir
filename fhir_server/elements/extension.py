@@ -10,13 +10,12 @@ class Extension(object):
 
     def __call__(self, *args, **kwargs):
         return PgComposite(
-            'fhir_extension',
+            "fhir_extension",
             [
-                Column('url', primitives.URIField, nullable=False),
+                Column("url", primitives.URIField, nullable=False),
                 # identifies the meaning of the extension.
-
-                Column('value', OpenType(), nullable=True),
-            ]
+                Column("value", OpenType(), nullable=True),
+            ],
         )
 
 

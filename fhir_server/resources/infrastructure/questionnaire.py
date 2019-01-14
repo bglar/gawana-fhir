@@ -10,13 +10,15 @@ class QuestionnaireItemOption(BackboneElement):
 
     enableWhen must contain either an 'answer' or an 'answered' element
     """
+
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('value', {'mini': 1, 'maxi': 1},
-                  OpenType(), None)
-            # Question that determines whether item is enabled
-        ])
+        elm.extend(
+            [
+                Field("value", {"mini": 1, "maxi": 1}, OpenType(), None)
+                # Question that determines whether item is enabled
+            ]
+        )
         return elm
 
 
@@ -28,21 +30,21 @@ class QuestionnaireItemEnableWhen(BackboneElement):
 
     enableWhen must contain either an 'answer' or an 'answered' element
     """
+
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('question', {'mini': 1, 'maxi': 1},
-                  primitives.StringField, None),
-            # Question that determines whether item is enabled
-
-            Field('answered', {'mini': 0, 'maxi': 1},
-                  primitives.BooleanField, None),
-            # Enable when answered or not
-
-            Field('answer', {'mini': 0, 'maxi': 1},
-                  OpenType(), None)
-            # Value question must have
-        ])
+        elm.extend(
+            [
+                Field("question", {"mini": 1, "maxi": 1}, primitives.StringField, None),
+                # Question that determines whether item is enabled
+                Field(
+                    "answered", {"mini": 0, "maxi": 1}, primitives.BooleanField, None
+                ),
+                # Enable when answered or not
+                Field("answer", {"mini": 0, "maxi": 1}, OpenType(), None)
+                # Value question must have
+            ]
+        )
         return elm
 
 
@@ -61,65 +63,60 @@ class QuestionnaireItem(BackboneElement):
     Read-only can't be specified for "display" items
     Default values can't be specified for groups or display items
     """
+
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('linkId', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # To link questionnaire with questionnaire response
-
-            Field('concept', {'mini': 0, 'maxi': -1},
-                  complex.CodingField(), None),
-            # Concept that represents this item within in a questionnaire
-
-            Field('prefix', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # E.g. "1(a)", "2.5.3"
-
-            Field('text', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Primary text for the item
-
-            Field('type', {'mini': 1, 'maxi': 1},
-                  primitives.StringField, None),
-            # group | display | boolean | decimal | integer | date | dateTime
-
-            Field('required', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Whether the item must be included in data results
-
-            Field('repeats', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Whether the item may repeat
-
-            Field('readOnly', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Don't allow human editing
-
-            Field('maxLength', {'mini': 0, 'maxi': 1},
-                  primitives.IntegerField, None),
-            # No more than this many characters
-
-            Field('options', {'mini': 0, 'maxi': 1},
-                  complex.ReferenceField(), ['ValueSet']),
-            # Valueset containing permitted answers
-
-            Field('enableWhen', {'mini': 0, 'maxi': -1},
-                  QuestionnaireItemEnableWhenField(), None),
-            # Value question must have
-
-            Field('option', {'mini': 0, 'maxi': -1},
-                  QuestionnaireItemOptionField(), None),
-            # Permitted answer
-
-            Field('initial', {'mini': 0, 'maxi': 1},
-                  OpenType(), None),
-            # Initial presumed answer for question
-
-            Field('item', {'mini': 0, 'maxi': -1},
-                  complex.ReferenceField, ['Self']),
-            # Permitted answers
-        ])
+        elm.extend(
+            [
+                Field("linkId", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # To link questionnaire with questionnaire response
+                Field("concept", {"mini": 0, "maxi": -1}, complex.CodingField(), None),
+                # Concept that represents this item within in a questionnaire
+                Field("prefix", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # E.g. "1(a)", "2.5.3"
+                Field("text", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # Primary text for the item
+                Field("type", {"mini": 1, "maxi": 1}, primitives.StringField, None),
+                # group | display | boolean | decimal | integer | date | dateTime
+                Field("required", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # Whether the item must be included in data results
+                Field("repeats", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # Whether the item may repeat
+                Field("readOnly", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # Don't allow human editing
+                Field(
+                    "maxLength", {"mini": 0, "maxi": 1}, primitives.IntegerField, None
+                ),
+                # No more than this many characters
+                Field(
+                    "options",
+                    {"mini": 0, "maxi": 1},
+                    complex.ReferenceField(),
+                    ["ValueSet"],
+                ),
+                # Valueset containing permitted answers
+                Field(
+                    "enableWhen",
+                    {"mini": 0, "maxi": -1},
+                    QuestionnaireItemEnableWhenField(),
+                    None,
+                ),
+                # Value question must have
+                Field(
+                    "option",
+                    {"mini": 0, "maxi": -1},
+                    QuestionnaireItemOptionField(),
+                    None,
+                ),
+                # Permitted answer
+                Field("initial", {"mini": 0, "maxi": 1}, OpenType(), None),
+                # Initial presumed answer for question
+                Field(
+                    "item", {"mini": 0, "maxi": -1}, complex.ReferenceField, ["Self"]
+                ),
+                # Permitted answers
+            ]
+        )
         return elm
 
 
@@ -133,6 +130,7 @@ class Questionnaire(DomainResource):
     The questions are ordered and grouped into coherent subsets, corresponding
     to the structure of the grouping of the underlying questions.
     """
+
     url = Column(primitives.URIField)
     # Globally unique logical identifier for questionnaire
 
@@ -169,11 +167,11 @@ class Questionnaire(DomainResource):
     item = Column(Array(QuestionnaireItemField()))
 
     def _resource_summary(self):
-        summary_fields = ['id', 'meta', 'type', 'total']
+        summary_fields = ["id", "meta", "type", "total"]
         return {
-            'repr': 'type: %r, link: %r' % (self.type, self.type),
-            'fields': summary_fields
+            "repr": "type: %r, link: %r" % (self.type, self.type),
+            "fields": summary_fields,
         }
 
     def __repr__(self):
-        return '<OperationOutcome %r>' % self.id
+        return "<OperationOutcome %r>" % self.id

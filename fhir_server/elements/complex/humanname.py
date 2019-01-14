@@ -17,35 +17,24 @@ class HumanName(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('family', {'mini': 0, 'maxi': -1},
-                  primitives.StringField, None),
-            # Family name (often called 'Surname').
-
-            Field('given', {'mini': 0, 'maxi': -1},
-                  primitives.StringField, None),
-            # Given names (not always 'first'). Includes middle names.
-
-            Field('prefix', {'mini': 0, 'maxi': -1},
-                  primitives.StringField, None),
-            # Parts that come before the name.
-
-            Field('suffix', {'mini': 0, 'maxi': -1},
-                  primitives.StringField, None),
-            # Parts that come after the name.
-
-            Field('text', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Text representation of the full name.
-
-            Field('use', {'mini': 0, 'maxi': 1},
-                  primitives.CodeField, None),
-            # usual | official | temp | nickname | anonymous | old | maiden.
-
-            Field('period', {'mini': 0, 'maxi': 1},
-                  PeriodField(), None)
-            # Time period when name was/is in use.
-        ])
+        elm.extend(
+            [
+                Field("family", {"mini": 0, "maxi": -1}, primitives.StringField, None),
+                # Family name (often called 'Surname').
+                Field("given", {"mini": 0, "maxi": -1}, primitives.StringField, None),
+                # Given names (not always 'first'). Includes middle names.
+                Field("prefix", {"mini": 0, "maxi": -1}, primitives.StringField, None),
+                # Parts that come before the name.
+                Field("suffix", {"mini": 0, "maxi": -1}, primitives.StringField, None),
+                # Parts that come after the name.
+                Field("text", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # Text representation of the full name.
+                Field("use", {"mini": 0, "maxi": 1}, primitives.CodeField, None),
+                # usual | official | temp | nickname | anonymous | old | maiden.
+                Field("period", {"mini": 0, "maxi": 1}, PeriodField(), None)
+                # Time period when name was/is in use.
+            ]
+        )
         return elm
 
 

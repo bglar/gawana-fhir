@@ -16,23 +16,28 @@ class OrganizationContact(BackboneElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('purpose', {'mini': 0, 'maxi': 1},
-                  complex.CodeableConceptField(), None),
-            # The type of contact.
-
-            Field('name', {'mini': 0, 'maxi': 1},
-                  complex.HumanNameField(), None),
-            # A name associated with the contact.
-
-            Field('address', {'mini': 0, 'maxi': 1},
-                  complex.AddressField(), None),
-            # Visiting or postal addresses for the contact.
-
-            Field('telecom', {'mini': 0, 'maxi': -1},
-                  complex.ContactPointField(), None)
-            # Contact details (telephone, email, etc.)  for a contact.
-        ])
+        elm.extend(
+            [
+                Field(
+                    "purpose",
+                    {"mini": 0, "maxi": 1},
+                    complex.CodeableConceptField(),
+                    None,
+                ),
+                # The type of contact.
+                Field("name", {"mini": 0, "maxi": 1}, complex.HumanNameField(), None),
+                # A name associated with the contact.
+                Field("address", {"mini": 0, "maxi": 1}, complex.AddressField(), None),
+                # Visiting or postal addresses for the contact.
+                Field(
+                    "telecom",
+                    {"mini": 0, "maxi": -1},
+                    complex.ContactPointField(),
+                    None,
+                )
+                # Contact details (telephone, email, etc.)  for a contact.
+            ]
+        )
         return elm
 
 
@@ -87,12 +92,9 @@ class Organization(DomainResource):
         Dict. values in the dict should be a | separated string of
         reference resources"""
 
-        return {
-            "partOf": "Organization",
-            "endpoint": "Endpoint"
-        }
+        return {"partOf": "Organization", "endpoint": "Endpoint"}
 
-    @validates('partOf', 'endpoint')
+    @validates("partOf", "endpoint")
     def reference_fields(self, key, field):
         """Validates multiple reference fields.
 
@@ -110,46 +112,45 @@ class Organization(DomainResource):
 
         return field
 
-    @validates('type')
+    @validates("type")
     def validate_organization_type(self, key, type):
-        msg = 'organization type code'
+        msg = "organization type code"
         self.code_fields_validator(type, ORGANIZATION_TYPE_URL, msg)
 
         return type
 
-    @validates('telecom')
+    @validates("telecom")
     def validate_telecom(self, key, telecom):
         if telecom:
             for tel in telecom:
-                code_val = tel.get('use')
-                if code_val == 'home':
-                    raise ValueError('The telecom of an organization '
-                                     'can never be of use `home`')
+                code_val = tel.get("use")
+                if code_val == "home":
+                    raise ValueError(
+                        "The telecom of an organization " "can never be of use `home`"
+                    )
 
         return telecom
 
-    @validates('address')
+    @validates("address")
     def validate_address(self, key, address):
         if address:
             for ad in address:
-                code_val = ad.get('use')
-                if code_val == 'home':
-                    raise ValueError('An address of an organization can '
-                                     'never be of use `home`')
+                code_val = ad.get("use")
+                if code_val == "home":
+                    raise ValueError(
+                        "An address of an organization can " "never be of use `home`"
+                    )
 
         return address
 
-    @validates('contact')
+    @validates("contact")
     def validates_contact(self, key, contact):
         if contact:
             pass
 
     def _resource_summary(self):
-        summary_fields = ['id', 'meta', 'identifier', 'name', 'type', ]
-        return {
-            'repr': '%r' % self.name,
-            'fields': summary_fields
-        }
+        summary_fields = ["id", "meta", "identifier", "name", "type"]
+        return {"repr": "%r" % self.name, "fields": summary_fields}
 
     def __repr__(self):
-        return '<%r %r>' % (self.__class__.__name__, self.name)
+        return "<%r %r>" % (self.__class__.__name__, self.name)

@@ -5,7 +5,8 @@ from sqlalchemy_utils import CompositeArray as Array
 from fhir_server.configs import (
     ISSUE_SEVERITY_URL,
     ISSUE_TYPE_URL,
-    OPERATION_OUTCOME_URL)
+    OPERATION_OUTCOME_URL,
+)
 from fhir_server.elements import primitives, Field, complex
 from fhir_server.resources.domainresource import DomainResource
 from fhir_server.elements.base.backboneelement import BackboneElement
@@ -19,31 +20,33 @@ class OperationOutcomeIssue(BackboneElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('code', {'mini': 1, 'maxi': 1},
-                  primitives.CodeField, None),
-            # Error or warning code.
-
-            Field('severity', {'mini': 1, 'maxi': 1},
-                  primitives.CodeField, None),
-            # fatal | error | warning | information.
-
-            Field('diagnostics', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Additional diagnostic information about the issue.
-
-            Field('location', {'mini': 0, 'maxi': -1},
-                  primitives.StringField, None),
-            # XPath of element(s) related to issue.
-
-            Field('expression', {'mini': 0, 'maxi': -1},
-                  primitives.StringField, None),
-            # FluentPath of element(s) related to issue
-
-            Field('details', {'mini': 0, 'maxi': 1},
-                  complex.CodeableConceptField(), None)
-            # Additional details about the error.
-        ])
+        elm.extend(
+            [
+                Field("code", {"mini": 1, "maxi": 1}, primitives.CodeField, None),
+                # Error or warning code.
+                Field("severity", {"mini": 1, "maxi": 1}, primitives.CodeField, None),
+                # fatal | error | warning | information.
+                Field(
+                    "diagnostics", {"mini": 0, "maxi": 1}, primitives.StringField, None
+                ),
+                # Additional diagnostic information about the issue.
+                Field(
+                    "location", {"mini": 0, "maxi": -1}, primitives.StringField, None
+                ),
+                # XPath of element(s) related to issue.
+                Field(
+                    "expression", {"mini": 0, "maxi": -1}, primitives.StringField, None
+                ),
+                # FluentPath of element(s) related to issue
+                Field(
+                    "details",
+                    {"mini": 0, "maxi": 1},
+                    complex.CodeableConceptField(),
+                    None,
+                )
+                # Additional details about the error.
+            ]
+        )
         return elm
 
 
@@ -78,11 +81,8 @@ class OperationOutcome(DomainResource):
     #     return issue
 
     def _resource_summary(self):
-        summary_fields = ['id', 'meta', 'issue', ]
-        return {
-            'repr': '%r' % self.issue,
-            'fields': summary_fields
-        }
+        summary_fields = ["id", "meta", "issue"]
+        return {"repr": "%r" % self.issue, "fields": summary_fields}
 
     def __repr__(self):
-        return '<OperationOutcome %r>' % self.id
+        return "<OperationOutcome %r>" % self.id

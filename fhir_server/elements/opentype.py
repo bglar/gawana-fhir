@@ -88,28 +88,26 @@ class OpenType(TypeDecorator):
                         "valueContactPoint": {"type": "object"},
                         "valueTiming": {"type": "object"},
                         "valueReference": {"type": "object"},
-                        "valueMeta": {"type": "object"}
+                        "valueMeta": {"type": "object"},
                     },
-                    "additionalProperties": False
-                },
+                    "additionalProperties": False,
+                }
             },
-
             "definition2": {
                 "nestedExtension": {
                     "type": "object",
                     "properties": {
                         "url": {"type", "string"},
-                        "extension": {"type": "array"}
+                        "extension": {"type": "array"},
                     },
                     "required": ["url"],
-                    "additionalProperties": False
+                    "additionalProperties": False,
                 }
             },
-
             "oneOf": [
                 {"$ref": "#definition1/valueX"},
                 {"$ref": "#definition2/nestedExtension"},
-            ]
+            ],
         }
 
         if value is not None:
@@ -118,7 +116,8 @@ class OpenType(TypeDecorator):
                     validate(value, schema)
                 except Exception:
                     raise ValueError(
-                        "The data provided for the extensions field is invalid")
+                        "The data provided for the extensions field is invalid"
+                    )
 
             value = json.dumps(value)
         return value

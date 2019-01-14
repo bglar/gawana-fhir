@@ -21,7 +21,7 @@ class Count(Quantity):
         Extend quantity complex type removing the unit field.
         """
         elm = super().element_properties()
-        elm = [e for e in elm if not(e.name == 'unit')]
+        elm = [e for e in elm if not (e.name == "unit")]
 
         return elm
 

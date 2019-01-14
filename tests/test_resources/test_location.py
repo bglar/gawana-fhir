@@ -8,43 +8,40 @@ from fhir_server.resources.identification.location import Location
 
 class TestLocation(object):
     valueset_data = [
-        {'code': 'secondary'},
-        {'code': 'UDI'},
-        {'code': 'FM'},
-        {'code': 'work'},
-        {'code': 'area'},
-        {'code': 'suspended'},
-        {'code': 'instance'},
-        {'code': 'phone'},
-        {'code': 'generated'}
+        {"code": "secondary"},
+        {"code": "UDI"},
+        {"code": "FM"},
+        {"code": "work"},
+        {"code": "area"},
+        {"code": "suspended"},
+        {"code": "instance"},
+        {"code": "phone"},
+        {"code": "generated"},
     ]
     id = "1"
     implicitRules = "https://gawana-fhir.constraints.co.ke/rules"
     language = "EN"
-    identifier = [{
-        "system": "system",
-        "use": "secondary",
-        "value": "value111",
-        "assigner": {
-            "reference": "reference url",
-            "display": "Patient X"
-        },
-        "type": {
-            "text": "text",
-            "coding": [
-                {
-                    "code": "UDI",
-                    "display": "display",
-                    "system": "http://testing.test.com",
-                    "userSelected": "True",
-                    "version": "2.3"
-                }]
-        },
-        "period": {
-            "start": "2011-05-24",
-            "end": "2011-06-24"
+    identifier = [
+        {
+            "system": "system",
+            "use": "secondary",
+            "value": "value111",
+            "assigner": {"reference": "reference url", "display": "Patient X"},
+            "type": {
+                "text": "text",
+                "coding": [
+                    {
+                        "code": "UDI",
+                        "display": "display",
+                        "system": "http://testing.test.com",
+                        "userSelected": "True",
+                        "version": "2.3",
+                    }
+                ],
+            },
+            "period": {"start": "2011-05-24", "end": "2011-06-24"},
         }
-    }]
+    ]
     status = "suspended"
     name = "Nairobi"
     description = "This is a Community based organization"
@@ -57,34 +54,33 @@ class TestLocation(object):
                 "display": "display",
                 "system": "http://testing.test.com",
                 "userSelected": "True",
-                "version": "2.3"
-            }]
+                "version": "2.3",
+            }
+        ],
     }
-    telecom = [{
-        "rank": 2,
-        "system": "phone",
-        "use": "work",
-        "value": "+254712122988",
-        "period": {
-            "start": "2011-05-24",
-            "end": "2011-06-24"
+    telecom = [
+        {
+            "rank": 2,
+            "system": "phone",
+            "use": "work",
+            "value": "+254712122988",
+            "period": {"start": "2011-05-24", "end": "2011-06-24"},
         }
-    }]
-    address = [{
-        "use": "work",
-        "text": "text",
-        "type": "postal",
-        "state": "state",
-        "postal_code": "postal code",
-        "line": ["line1", "line2"],
-        "district": "district",
-        "country": "KEN",
-        "city": "city",
-        "period": {
-            "start": "2011-05-24",
-            "end": "2011-06-24"
+    ]
+    address = [
+        {
+            "use": "work",
+            "text": "text",
+            "type": "postal",
+            "state": "state",
+            "postal_code": "postal code",
+            "line": ["line1", "line2"],
+            "district": "district",
+            "country": "KEN",
+            "city": "city",
+            "period": {"start": "2011-05-24", "end": "2011-06-24"},
         }
-    }]
+    ]
     physical_type = {
         "text": "text",
         "coding": [
@@ -93,28 +89,25 @@ class TestLocation(object):
                 "display": "display",
                 "system": "http://testing.test.com",
                 "userSelected": "True",
-                "version": "2.3"
-            }]
+                "version": "2.3",
+            }
+        ],
     }
-    position = {
-        "longitude": 12.3323323,
-        "latitude": 32.3232324,
-        "altitude": 0.24242424
-    }
+    position = {"longitude": 12.3323323, "latitude": 32.3232324, "altitude": 0.24242424}
     managingOrganization = {
         "display": "display",
-        "reference": "http://spark.furore.com/fhir/Organization/1"
+        "reference": "http://spark.furore.com/fhir/Organization/1",
     }
     part_of = {
         "display": "display",
-        "reference": "http://spark.furore.com/fhir/Location/2"
+        "reference": "http://spark.furore.com/fhir/Location/2",
     }
 
-    @patch('fhir_server.helpers.validations.requests.get')
+    @patch("fhir_server.helpers.validations.requests.get")
     def test_location_repr(self, mock_get):
         mock_get.return_value.json.return_value = {
-            'count': len(self.valueset_data),
-            'data': self.valueset_data
+            "count": len(self.valueset_data),
+            "data": self.valueset_data,
         }
         data = Location(
             id=self.id,
@@ -131,16 +124,16 @@ class TestLocation(object):
             physicalType=self.physical_type,
             position=self.position,
             managingOrganization=self.managingOrganization,
-            partOf=self.part_of
+            partOf=self.part_of,
         )
 
         assert str(data) == "<Location 'Nairobi'>"
 
-    @patch('fhir_server.helpers.validations.requests.get')
+    @patch("fhir_server.helpers.validations.requests.get")
     def test_code_fields_validator_none_value(self, mock_get):
         mock_get.return_value.json.return_value = {
-            'count': len(self.valueset_data),
-            'data': self.valueset_data
+            "count": len(self.valueset_data),
+            "data": self.valueset_data,
         }
         data = Location(
             id=self.id,
@@ -157,18 +150,18 @@ class TestLocation(object):
             physicalType=None,
             position=self.position,
             managingOrganization=self.managingOrganization,
-            partOf=self.part_of
+            partOf=self.part_of,
         )
 
         assert str(data) == "<Location 'Nairobi'>"
 
-    @patch('fhir_server.elements.base.reference_validator.reference_resolution')
-    @patch('fhir_server.helpers.validations.requests.get')
+    @patch("fhir_server.elements.base.reference_validator.reference_resolution")
+    @patch("fhir_server.helpers.validations.requests.get")
     def test_save_location(self, mock_get, mock_ref, session):
         mock_ref.return_value = True
         mock_get.return_value.json.return_value = {
-            'count': len(self.valueset_data),
-            'data': self.valueset_data
+            "count": len(self.valueset_data),
+            "data": self.valueset_data,
         }
         data = Location(
             id=self.id,
@@ -185,20 +178,20 @@ class TestLocation(object):
             physicalType=self.physical_type,
             position=self.position,
             managingOrganization=self.managingOrganization,
-            partOf=self.part_of
+            partOf=self.part_of,
         )
         session.add(data)
         session.commit()
         register_composites(session.connection())
         get = session.query(Location).first()
-        assert get.id == '1'
-        assert get.language == 'EN'
+        assert get.id == "1"
+        assert get.language == "EN"
 
-    @patch('fhir_server.helpers.validations.requests.get')
+    @patch("fhir_server.helpers.validations.requests.get")
     def test_reject_data_if_status_is_not_valid(self, mock_get):
         mock_get.return_value.json.return_value = {
-            'count': len(self.valueset_data),
-            'data': self.valueset_data
+            "count": len(self.valueset_data),
+            "data": self.valueset_data,
         }
         with pytest.raises(TypeError) as excinfo:
             Location(
@@ -206,7 +199,7 @@ class TestLocation(object):
                 implicitRules=self.implicitRules,
                 language=self.language,
                 identifier=self.identifier,
-                status='invalid',
+                status="invalid",
                 name=self.name,
                 description=self.description,
                 mode=self.mode,
@@ -216,15 +209,15 @@ class TestLocation(object):
                 physicalType=self.physical_type,
                 position=self.position,
                 managingOrganization=self.managingOrganization,
-                partOf=self.part_of
+                partOf=self.part_of,
             )
         assert "The location status must be defined in" in str(excinfo.value)
 
-    @patch('fhir_server.helpers.validations.requests.get')
+    @patch("fhir_server.helpers.validations.requests.get")
     def test_reject_data_if_mode_is_not_valid(self, mock_get):
         mock_get.return_value.json.return_value = {
-            'count': len(self.valueset_data),
-            'data': self.valueset_data
+            "count": len(self.valueset_data),
+            "data": self.valueset_data,
         }
         with pytest.raises(TypeError) as excinfo:
             Location(
@@ -235,22 +228,22 @@ class TestLocation(object):
                 status=self.status,
                 name=self.name,
                 description=self.description,
-                mode='invalid',
+                mode="invalid",
                 type=self.locationType,
                 telecom=self.telecom,
                 address=self.address,
                 physicalType=self.physical_type,
                 position=self.position,
                 managingOrganization=self.managingOrganization,
-                partOf=self.part_of
+                partOf=self.part_of,
             )
         assert "The location mode must be defined in" in str(excinfo.value)
 
-    @patch('fhir_server.helpers.validations.requests.get')
+    @patch("fhir_server.helpers.validations.requests.get")
     def test_reject_data_if_locationType_is_not_valid(self, mock_get):
         mock_get.return_value.json.return_value = {
-            'count': len(self.valueset_data),
-            'data': self.valueset_data
+            "count": len(self.valueset_data),
+            "data": self.valueset_data,
         }
         with pytest.raises(TypeError) as excinfo:
             Location(
@@ -270,23 +263,24 @@ class TestLocation(object):
                             "display": "display",
                             "system": "http://testing.test.com",
                             "userSelected": "True",
-                            "version": "2.3"
-                        }]
+                            "version": "2.3",
+                        }
+                    ],
                 },
                 telecom=self.telecom,
                 address=self.address,
                 physicalType=self.physical_type,
                 position=self.position,
                 managingOrganization=self.managingOrganization,
-                partOf=self.part_of
+                partOf=self.part_of,
             )
         assert "The location type code must be defined in" in str(excinfo.value)
 
-    @patch('fhir_server.helpers.validations.requests.get')
+    @patch("fhir_server.helpers.validations.requests.get")
     def test_reject_data_if_physical_type_is_not_valid(self, mock_get):
         mock_get.return_value.json.return_value = {
-            'count': len(self.valueset_data),
-            'data': self.valueset_data
+            "count": len(self.valueset_data),
+            "data": self.valueset_data,
         }
         with pytest.raises(TypeError) as excinfo:
             Location(
@@ -309,12 +303,14 @@ class TestLocation(object):
                             "display": "display",
                             "system": "http://testing.test.com",
                             "userSelected": "True",
-                            "version": "2.3"
-                        }]
+                            "version": "2.3",
+                        }
+                    ],
                 },
                 position=self.position,
                 managingOrganization=self.managingOrganization,
-                partOf=self.part_of
+                partOf=self.part_of,
             )
         assert "The location physical type code must be defined in" in str(
-            excinfo.value)
+            excinfo.value
+        )

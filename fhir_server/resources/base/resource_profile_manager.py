@@ -35,23 +35,23 @@ class ResourceProfile(object):
     """
 
     def __init__(self, constraints):
-        self.resource_name = constraints.get('resource')
-        self.fields = constraints.get('fields')
+        self.resource_name = constraints.get("resource")
+        self.fields = constraints.get("fields")
         self.resource_instance = {}
         self.profiled_columns = []
         constr.append(constraints)
 
         if self.resource_name is None:
             raise Exception(
-                "Missing Key: resource",
-                "It's value should be name of a fhir resource")
+                "Missing Key: resource", "It's value should be name of a fhir resource"
+            )
         else:
             self.resource_name = self.resource_name.lower()
 
         if self.fields is None:
             raise Exception(
-                'Missing Key: fields',
-                'Should have a field name and cardinality')
+                "Missing Key: fields", "Should have a field name and cardinality"
+            )
 
         self.apply_constraints()
 
@@ -63,19 +63,20 @@ class ResourceProfile(object):
             res = self.resource_instance.get(self.resource_name)
 
             for field in self.fields:
-                name = field.get('name')
-                cardinality = field.get('cardinality')
+                name = field.get("name")
+                cardinality = field.get("cardinality")
 
                 # get the column from schema definition
                 col = res.__table__.columns.get(name)
                 if col is not None:
                     default_type = col.type
 
-                    if cardinality['mini'] == '1' and col.nullable:
+                    if cardinality["mini"] == "1" and col.nullable:
                         col.nullable = False
 
-                    if cardinality['maxi'] == '*' and not (
-                            isinstance(col.type, CompositeArray)):
+                    if cardinality["maxi"] == "*" and not (
+                        isinstance(col.type, CompositeArray)
+                    ):
 
                         col.type = CompositeArray(default_type)
 
@@ -89,9 +90,10 @@ class ResourceProfile(object):
 
         else:
             raise Exception(
-                'Missing Resource',
-                'The resource is not available in this server or it has '
-                'not been registered')
+                "Missing Resource",
+                "The resource is not available in this server or it has "
+                "not been registered",
+            )
 
 
 class XMLProfileManager(object):
@@ -110,12 +112,9 @@ class XMLProfileManager(object):
     def __init__(self, file_path):
         with open(file_path) as fd:
             self.doc = xmltodict.parse(fd.read())
-            self.resource_name = ''
+            self.resource_name = ""
             self.resource_fields = []
-            self.constraints = {
-                'resource': '',
-                'fields': []
-            }
+            self.constraints = {"resource": "", "fields": []}
 
             profiled_fields = self.construct_constraints()
             ResourceProfile(profiled_fields)
@@ -123,26 +122,24 @@ class XMLProfileManager(object):
     def construct_constraints(self):
 
         for key, element in enumerate(
-                (self.doc['StructureDefinition']['differential']['element'])):
+            (self.doc["StructureDefinition"]["differential"]["element"])
+        ):
 
             if key == 0:
                 # The 1st element is always the Resource
-                self.resource_name = element['path']['@value']
-                self.constraints['resource'] = self.resource_name
+                self.resource_name = element["path"]["@value"]
+                self.constraints["resource"] = self.resource_name
 
             else:
-                field_path = element['path']['@value']
-                field = re.sub(self.resource_name + '.', '', field_path, 1)
+                field_path = element["path"]["@value"]
+                field = re.sub(self.resource_name + ".", "", field_path, 1)
 
-                new_min = element['min']['@value']
-                new_max = element['max']['@value']
+                new_min = element["min"]["@value"]
+                new_max = element["max"]["@value"]
 
                 data = {
-                    'name': field,
-                    'cardinality': {
-                        'mini': new_min,
-                        'maxi': new_max
-                    }
+                    "name": field,
+                    "cardinality": {"mini": new_min, "maxi": new_max},
                 }
-                self.constraints['fields'].append(data)
+                self.constraints["fields"].append(data)
         return self.constraints

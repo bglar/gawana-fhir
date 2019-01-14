@@ -10,8 +10,8 @@ def test():
 
 
 def run():
-    local('python {}/manage.py run'.format(BASE_DIR))
+    local("python {}/manage.py run".format(BASE_DIR))
 
 
 def shell():
-    local('python {}/manage.py shell'.format(BASE_DIR))
+    local("python {}/manage.py shell".format(BASE_DIR))

@@ -14,6 +14,7 @@ from fhir_server.api import response as Response
 from fhir_server.api import *  # noqa
 from fhir_server.api.url_converters import FhirOperationsConverter
 from fhir_server.oauth_server import *  # noqa
+
 # from fhir_server.resources.profiledOrg import DemoOrgResource1
 
 from .configs import *  # noqa
@@ -21,9 +22,11 @@ from .configs import *  # noqa
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 my_resources = Blueprint(
-    'flask-api', __name__,
-    url_prefix='/flask-api',
-    template_folder='templates', static_folder='static'
+    "flask-api",
+    __name__,
+    url_prefix="/flask-api",
+    template_folder="templates",
+    static_folder="static",
 )
 
 
@@ -32,16 +35,13 @@ class FhirAPI(FlaskAPI):
         super(FlaskAPI, self).__init__(*args, **kwargs)
         self.api_settings = APISettings(self.config)
         self.register_blueprint(my_resources)
-        self.jinja_env.filters['urlize_quoted_links'] = urlize_quoted_links
+        self.jinja_env.filters["urlize_quoted_links"] = urlize_quoted_links
 
 
 # For import *
-__all__ = ['create_app']
+__all__ = ["create_app"]
 
-DEFAULT_BLUEPRINTS = [
-    api_v1,
-    api_auth
-]
+DEFAULT_BLUEPRINTS = [api_v1, api_auth]
 
 
 def create_app(config=None, app_name=None, blueprints=None):
@@ -55,25 +55,25 @@ def create_app(config=None, app_name=None, blueprints=None):
     app = FhirAPI(app_name)
     configure_app(app, config)
 
-    app.config.setdefault('SQLALCHEMY_TRACK_MODIFICATIONS', True)
-    app.config['CACHE_TYPE'] = 'redis'
-    app.config['TRAP_HTTP_EXCEPTIONS'] = True
-    app.config['DEFAULT_RENDERERS'] = [
-        'flask_api.renderers.JSONRenderer',
-        'flask_api.renderers.BrowsableAPIRenderer',
+    app.config.setdefault("SQLALCHEMY_TRACK_MODIFICATIONS", True)
+    app.config["CACHE_TYPE"] = "redis"
+    app.config["TRAP_HTTP_EXCEPTIONS"] = True
+    app.config["DEFAULT_RENDERERS"] = [
+        "flask_api.renderers.JSONRenderer",
+        "flask_api.renderers.BrowsableAPIRenderer",
     ]
-    app.config['DEFAULT_PARSERS'] = [
-        'flask_api.parsers.JSONParser',
-        'flask_api.parsers.URLEncodedParser',
-        'flask_api.parsers.MultiPartParser'
+    app.config["DEFAULT_PARSERS"] = [
+        "flask_api.parsers.JSONParser",
+        "flask_api.parsers.URLEncodedParser",
+        "flask_api.parsers.MultiPartParser",
     ]
-    app.config.from_object(os.environ['APP_SETTINGS'])
+    app.config.from_object(os.environ["APP_SETTINGS"])
 
     db.init_app(app)
     configure_extensions(app)
     configure_blueprints(app, blueprints)
 
-    if not app.config['DEBUG']:
+    if not app.config["DEBUG"]:
         # Override default Flask error handlers if DEBUG = False
         configure_error_handlers(app)
 
@@ -89,9 +89,9 @@ def create_app(config=None, app_name=None, blueprints=None):
         db.create_all()
 
     if app.debug:
-        print('running in debug mode')
+        print("running in debug mode")
     else:
-        print('NOT running in debug mode')
+        print("NOT running in debug mode")
     return app
 
 
@@ -104,23 +104,24 @@ def configure_app(app, config=None):
         app.config.from_object(config)
         return
 
-    MODE = os.getenv('APPLICATION_MODE', 'DEVELOPMENT')
+    MODE = os.getenv("APPLICATION_MODE", "DEVELOPMENT")
     print("Running in %s mode" % MODE)
     app.config.from_object(get_config(MODE))
 
 
 def configure_extensions(app):
     # register werkzeug routing converter
-    app.url_map.converters['fhirop'] = FhirOperationsConverter
+    app.url_map.converters["fhirop"] = FhirOperationsConverter
 
     # redis
     app.redis = redis.StrictRedis(
-        host=app.config['REDIS_CONFIG']['HOST'],
-        port=app.config['REDIS_CONFIG']['PORT'],
-        db=app.config['REDIS_CONFIG']['CACHE_DB'])
+        host=app.config["REDIS_CONFIG"]["HOST"],
+        port=app.config["REDIS_CONFIG"]["PORT"],
+        db=app.config["REDIS_CONFIG"]["CACHE_DB"],
+    )
 
     # Celery
-    celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+    celery = Celery(app.name, broker=app.config["CELERY_BROKER_URL"])
     celery.conf.update(app.config)
 
 
@@ -152,10 +153,13 @@ def configure_error_handlers(app):
         diagnostics = error.__str__()
         try:
             return Response.log_operation_outcome(
-                location=None, status_code=error.code, severity='fatal',
-                diagnostics=diagnostics)
+                location=None,
+                status_code=error.code,
+                severity="fatal",
+                diagnostics=diagnostics,
+            )
 
         except Exception as e:
             return Response.log_operation_outcome(
-                location=None, status_code=500, severity='fatal',
-                diagnostics=e)
+                location=None, status_code=500, severity="fatal", diagnostics=e
+            )

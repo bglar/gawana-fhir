@@ -18,14 +18,14 @@ class CodeableConcept(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('text', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Plain text representation of the concept.
-
-            Field('coding', {'mini': 0, 'maxi': -1}, CodingField(), None),
-            # Code defined by a terminology system.
-        ])
+        elm.extend(
+            [
+                Field("text", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # Plain text representation of the concept.
+                Field("coding", {"mini": 0, "maxi": -1}, CodingField(), None),
+                # Code defined by a terminology system.
+            ]
+        )
         return elm
 
 

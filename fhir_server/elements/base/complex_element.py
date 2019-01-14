@@ -9,7 +9,7 @@ from fhir_server.elements.extension import ElementExtension
 from .complex_mixin import PgComposite
 
 
-Field = namedtuple('Field', ['name', 'cardinality', 'type', 'reference'])
+Field = namedtuple("Field", ["name", "cardinality", "type", "reference"])
 
 
 class ComplexElement(object):
@@ -17,14 +17,14 @@ class ComplexElement(object):
 
     Base definition for all complex elements in a resource.
     """
+
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, *args, **kwargs):
         self.fields = [
-            Column('id', primitives.StringField),
+            Column("id", primitives.StringField),
             # xml:id (or equivalent in JSON).
-
-            Column('extension', CompositeArray(ElementExtension()))
+            Column("extension", CompositeArray(ElementExtension()))
             # Additional Content defined by implementations.
         ]
 
@@ -42,11 +42,13 @@ class ComplexElement(object):
         if len(properties) > 0:
             for prop in properties:
                 name = prop.name
-                nullable = True if (
-                    prop.cardinality['mini'] == 0) else False
+                nullable = True if (prop.cardinality["mini"] == 0) else False
 
-                field_type = CompositeArray(prop.type) if (
-                    prop.cardinality['maxi'] == -1) else prop.type
+                field_type = (
+                    CompositeArray(prop.type)
+                    if (prop.cardinality["maxi"] == -1)
+                    else prop.type
+                )
 
                 new_column = Column(name, field_type, nullable=nullable)
 
@@ -54,5 +56,5 @@ class ComplexElement(object):
                 if name not in field_names:
                     self.fields.append(new_column)
 
-        data_type = 'fhir_%s' % self.__class__.__name__.lower()
+        data_type = "fhir_%s" % self.__class__.__name__.lower()
         return PgComposite(data_type, self.fields)

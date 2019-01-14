@@ -10,14 +10,21 @@ class BackboneElement(ComplexElement):
     Base definition for all elements that are defined inside a resource - but
     not those in a data type.
     """
+
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('modifierExtension', {'mini': 0, 'maxi': -1},
-                  ElementExtension(), None)
-            # Extensions that cannot be ignored.
-        ])
+        elm.extend(
+            [
+                Field(
+                    "modifierExtension",
+                    {"mini": 0, "maxi": -1},
+                    ElementExtension(),
+                    None,
+                )
+                # Extensions that cannot be ignored.
+            ]
+        )
         return elm

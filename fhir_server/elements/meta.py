@@ -16,28 +16,25 @@ class Meta(ComplexElement):
     maintained by the infrastructure. Changes to the content may not always be
     associated with version changes to the resource.
     """
+
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('versionId', {'mini': 0, 'maxi': 1},
-                  primitives.IdField, None),
-            # Version specific identifier.
-
-            Field('lastUpdated', {'mini': 0, 'maxi': 1},
-                  primitives.InstantField, None),
-            # When the resource version last changed.
-
-            Field('profile', {'mini': 0, 'maxi': -1},
-                  primitives.URIField, None),
-            # Profiles this resource claims to conform to.
-
-            Field('security', {'mini': 0, 'maxi': -1},
-                  CodingField(), None),
-            # Security Labels applied to this resource.
-
-            Field('tag', {'mini': 0, 'maxi': -1}, CodingField(), None)
-            # Tags applied to this resource.
-        ])
+        elm.extend(
+            [
+                Field("versionId", {"mini": 0, "maxi": 1}, primitives.IdField, None),
+                # Version specific identifier.
+                Field(
+                    "lastUpdated", {"mini": 0, "maxi": 1}, primitives.InstantField, None
+                ),
+                # When the resource version last changed.
+                Field("profile", {"mini": 0, "maxi": -1}, primitives.URIField, None),
+                # Profiles this resource claims to conform to.
+                Field("security", {"mini": 0, "maxi": -1}, CodingField(), None),
+                # Security Labels applied to this resource.
+                Field("tag", {"mini": 0, "maxi": -1}, CodingField(), None)
+                # Tags applied to this resource.
+            ]
+        )
         return elm
 
 

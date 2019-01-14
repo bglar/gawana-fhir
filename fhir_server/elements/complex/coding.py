@@ -13,27 +13,25 @@ class Coding(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('code', {'mini': 0, 'maxi': 1},
-                  primitives.CodeField, None),
-            # Symbol in syntax defined by the system.
-
-            Field('display', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Representation defined by the system.
-
-            Field('system', {'mini': 0, 'maxi': 1},
-                  primitives.URIField, None),
-            # Identity of the terminology system.
-
-            Field('userSelected', {'mini': 0, 'maxi': 1},
-                  primitives.BooleanField, None),
-            # If this coding was chosen directly by the user.
-
-            Field('version', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Version of the system - if relevant.
-        ])
+        elm.extend(
+            [
+                Field("code", {"mini": 0, "maxi": 1}, primitives.CodeField, None),
+                # Symbol in syntax defined by the system.
+                Field("display", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # Representation defined by the system.
+                Field("system", {"mini": 0, "maxi": 1}, primitives.URIField, None),
+                # Identity of the terminology system.
+                Field(
+                    "userSelected",
+                    {"mini": 0, "maxi": 1},
+                    primitives.BooleanField,
+                    None,
+                ),
+                # If this coding was chosen directly by the user.
+                Field("version", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # Version of the system - if relevant.
+            ]
+        )
         return elm
 
 

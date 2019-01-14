@@ -17,15 +17,14 @@ class Ratio(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('denominator', {'mini': 0, 'maxi': 1},
-                  QuantityField(), None),
-            # Denominator value.
-
-            Field('numerator', {'mini': 0, 'maxi': 1},
-                  QuantityField(), None)
-            # Numerator value.
-        ])
+        elm.extend(
+            [
+                Field("denominator", {"mini": 0, "maxi": 1}, QuantityField(), None),
+                # Denominator value.
+                Field("numerator", {"mini": 0, "maxi": 1}, QuantityField(), None)
+                # Numerator value.
+            ]
+        )
         return elm
 
 

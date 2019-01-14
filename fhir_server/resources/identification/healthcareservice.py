@@ -9,7 +9,8 @@ from fhir_server.configs import (
     C80_PRACTICE_CODES_URL,
     SERVICE_PROVISION_CONDITIONS_URL,
     REFERRAL_METHOD_URL,
-    DAYS_OF_WEEK)
+    DAYS_OF_WEEK,
+)
 from fhir_server.elements import primitives, complex
 from fhir_server.elements.base.backboneelement import BackboneElement
 from fhir_server.resources.domainresource import DomainResource
@@ -24,23 +25,30 @@ class HealthcareServiceAvailableTime(BackboneElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('daysOfWeek', {'mini': 0, 'maxi': -1},
-                  primitives.CodeField, None),
-            # mon | tue | wed | thu | fri | sat | sun.
-
-            Field('allDay', {'mini': 0, 'maxi': 1},
-                  primitives.BooleanField, None),
-            # Always available? e.g. 24 hour service.
-
-            Field('availableStartTime', {'mini': 0, 'maxi': 1},
-                  primitives.TimeField, None),
-            # Opening time of day (ignored if allDay = true).
-
-            Field('availableEndTime', {'mini': 0, 'maxi': 1},
-                  primitives.TimeField, None)
-            # Closing time of day (ignored if allDay = true).
-        ])
+        elm.extend(
+            [
+                Field(
+                    "daysOfWeek", {"mini": 0, "maxi": -1}, primitives.CodeField, None
+                ),
+                # mon | tue | wed | thu | fri | sat | sun.
+                Field("allDay", {"mini": 0, "maxi": 1}, primitives.BooleanField, None),
+                # Always available? e.g. 24 hour service.
+                Field(
+                    "availableStartTime",
+                    {"mini": 0, "maxi": 1},
+                    primitives.TimeField,
+                    None,
+                ),
+                # Opening time of day (ignored if allDay = true).
+                Field(
+                    "availableEndTime",
+                    {"mini": 0, "maxi": 1},
+                    primitives.TimeField,
+                    None,
+                )
+                # Closing time of day (ignored if allDay = true).
+            ]
+        )
         return elm
 
 
@@ -53,17 +61,19 @@ class HealthcareServiceNotAvailable(BackboneElement):
     The HealthcareService is not available during this period of time due to
     the provided reason.
     """
+
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('description', {'mini': 1, 'maxi': 1},
-                  primitives.StringField, None),
-            # Reason presented to the user explaining why time not available.
-
-            Field('during', {'mini': 0, 'maxi': 1},
-                  complex.PeriodField(), None)
-            # Service not available from this date.
-        ])
+        elm.extend(
+            [
+                Field(
+                    "description", {"mini": 1, "maxi": 1}, primitives.StringField, None
+                ),
+                # Reason presented to the user explaining why time not available.
+                Field("during", {"mini": 0, "maxi": 1}, complex.PeriodField(), None)
+                # Service not available from this date.
+            ]
+        )
         return elm
 
 
@@ -73,6 +83,7 @@ HealthcareServiceNotAvailableField = HealthcareServiceNotAvailable()
 class HealthcareService(DomainResource):
     """ The details of a healthcare service available at a location.
     """
+
     active = Column(primitives.BooleanField)
     # Whether this healthcareservice is in active use
 
@@ -155,62 +166,60 @@ class HealthcareService(DomainResource):
         return {
             "providedBy": "Organization",
             "location": "Location",
-            "coverageArea": "Location"
+            "coverageArea": "Location",
         }
 
-    @validates('serviceCategory')
+    @validates("serviceCategory")
     def validate_service_category(self, key, serviceCategory):
-        msg = 'service category code'
+        msg = "service category code"
         self.code_fields_validator(serviceCategory, SERVICE_CATEGORY_URL, msg)
 
         return serviceCategory
 
-    @validates('serviceType')
+    @validates("serviceType")
     def validate_service_type(self, key, serviceType):
-        msg = 'service type code'
+        msg = "service type code"
         self.code_fields_validator(serviceType, SERVICE_TYPE_URL, msg)
 
         return serviceType
 
-    @validates('speciality')
+    @validates("speciality")
     def validate_speciality(self, key, speciality):
-        msg = 'service speciality code'
+        msg = "service speciality code"
         self.code_fields_validator(speciality, C80_PRACTICE_CODES_URL, msg)
 
         return speciality
 
-    @validates('serviceProvisionCode')
+    @validates("serviceProvisionCode")
     def validate_service_provision_code(self, key, serviceProvisionCode):
-        msg = 'service provision code code'
+        msg = "service provision code code"
         self.code_fields_validator(
-            serviceProvisionCode, SERVICE_PROVISION_CONDITIONS_URL, msg)
+            serviceProvisionCode, SERVICE_PROVISION_CONDITIONS_URL, msg
+        )
 
         return serviceProvisionCode
 
-    @validates('referralMethod')
+    @validates("referralMethod")
     def validate_referral_method(self, key, referralMethod):
-        msg = 'service referral Method code'
+        msg = "service referral Method code"
         self.code_fields_validator(referralMethod, REFERRAL_METHOD_URL, msg)
 
         return referralMethod
 
-    @validates('availableTime')
+    @validates("availableTime")
     def validate_available_time(self, key, availableTime):
         for data in availableTime:
-            daysOfWeek = data.get('daysOfWeek')
+            daysOfWeek = data.get("daysOfWeek")
 
             for code in daysOfWeek:
-                url = DAYS_OF_WEEK + '?code=' + code
-                self.validate_valuesets(code, url, 'service available Time')
+                url = DAYS_OF_WEEK + "?code=" + code
+                self.validate_valuesets(code, url, "service available Time")
 
         return availableTime
 
     def _resource_summary(self):
-        summary_fields = ['id', 'meta', 'identifier', 'serviceName', ]
-        return {
-            'repr': '%r' % self.serviceName,
-            'fields': summary_fields
-        }
+        summary_fields = ["id", "meta", "identifier", "serviceName"]
+        return {"repr": "%r" % self.serviceName, "fields": summary_fields}
 
     def __repr__(self):
-        return '<HealthcareService %r>' % self.serviceName
+        return "<HealthcareService %r>" % self.serviceName
