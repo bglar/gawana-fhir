@@ -21,32 +21,35 @@ class Signature(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('blob', {'mini': 1, 'maxi': 1},
-                  primitives.Base64Field, None),
-            # The actual signature content (XML DigSig. JWT, picture, etc.).
-
-            Field('contentType', {'mini': 1, 'maxi': 1},
-                  primitives.CodeField, None),
-            # The technical format of the signature.
-
-            Field('when', {'mini': 1, 'maxi': 1},
-                  primitives.InstantField, None),
-            # When the signature was created.
-
-            Field('whoUri', {'mini': 1, 'maxi': 1},
-                  primitives.URIField, None),
-            # Who signed the signature.
-
-            Field('whoReference', {'mini': 1, 'maxi': 1}, ReferenceField(),
-                  ['Practitioner', 'RelatedPerson', 'Patient', 'Device',
-                  'Organization']),
-            # Who signed the signature.
-
-            Field('type', {'mini': 1, 'maxi': -1},
-                  CodingField(), None)
-            # Indication of the reason the entity signed the object(s).
-        ])
+        elm.extend(
+            [
+                Field("blob", {"mini": 1, "maxi": 1}, primitives.Base64Field, None),
+                # The actual signature content (XML DigSig. JWT, picture, etc.).
+                Field(
+                    "contentType", {"mini": 1, "maxi": 1}, primitives.CodeField, None
+                ),
+                # The technical format of the signature.
+                Field("when", {"mini": 1, "maxi": 1}, primitives.InstantField, None),
+                # When the signature was created.
+                Field("whoUri", {"mini": 1, "maxi": 1}, primitives.URIField, None),
+                # Who signed the signature.
+                Field(
+                    "whoReference",
+                    {"mini": 1, "maxi": 1},
+                    ReferenceField(),
+                    [
+                        "Practitioner",
+                        "RelatedPerson",
+                        "Patient",
+                        "Device",
+                        "Organization",
+                    ],
+                ),
+                # Who signed the signature.
+                Field("type", {"mini": 1, "maxi": -1}, CodingField(), None)
+                # Indication of the reason the entity signed the object(s).
+            ]
+        )
         return elm
 
 

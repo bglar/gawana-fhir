@@ -16,15 +16,14 @@ class Period(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('end', {'mini': 0, 'maxi': 1},
-                  primitives.DateTimeField, None),
-            # End time with inclusive boundary, if not ongoing.
-
-            Field('start', {'mini': 0, 'maxi': 1},
-                  primitives.DateTimeField, None)
-            # Starting time with inclusive boundary.
-        ])
+        elm.extend(
+            [
+                Field("end", {"mini": 0, "maxi": 1}, primitives.DateTimeField, None),
+                # End time with inclusive boundary, if not ongoing.
+                Field("start", {"mini": 0, "maxi": 1}, primitives.DateTimeField, None)
+                # Starting time with inclusive boundary.
+            ]
+        )
         return elm
 
 

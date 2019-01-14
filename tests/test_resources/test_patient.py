@@ -5,90 +5,82 @@ from fhir_server.resources.identification.patient import Patient
 
 class TestPatient(object):
     valuesets_data = [
-        {'code': 'secondary'},
-        {'code': 'UDI'},
-        {'code': 'official'},
-        {'code': 'work'},
-        {'code': 'U'},
-        {'code': 'family'},
-        {'code': 'gsd'},
-        {'code': 'intact'},
-        {'code': 'canislf'},
-        {'code': 'en'},
-        {'code': 'male'},
-        {'code': 'replace'}
+        {"code": "secondary"},
+        {"code": "UDI"},
+        {"code": "official"},
+        {"code": "work"},
+        {"code": "U"},
+        {"code": "family"},
+        {"code": "gsd"},
+        {"code": "intact"},
+        {"code": "canislf"},
+        {"code": "en"},
+        {"code": "male"},
+        {"code": "replace"},
     ]
     id = "1"
     implicitRules = "https://gawana-fhir.constraints.co.ke/rules"
     language = "en"
-    identifier = [{
-        "system": "system",
-        "use": "secondary",
-        "value": "value111",
-        "assigner": {
-            "reference": "reference url",
-            "display": "Patient X"
-        },
-        "type": {
-            "text": "text",
-            "coding": [
-                {
-                    "code": "UDI",
-                    "display": "display",
-                    "system": "http://testing.test.com",
-                    "userSelected": "True",
-                    "version": "2.3"
-                }]
-        },
-        "period": {
-            "start": "2011-05-24",
-            "end": "2011-06-24"
+    identifier = [
+        {
+            "system": "system",
+            "use": "secondary",
+            "value": "value111",
+            "assigner": {"reference": "reference url", "display": "Patient X"},
+            "type": {
+                "text": "text",
+                "coding": [
+                    {
+                        "code": "UDI",
+                        "display": "display",
+                        "system": "http://testing.test.com",
+                        "userSelected": "True",
+                        "version": "2.3",
+                    }
+                ],
+            },
+            "period": {"start": "2011-05-24", "end": "2011-06-24"},
         }
-    }]
+    ]
     active = True
     name = [
         {
-            'family': ['family', 'family2'],
-            'given': ['given', 'given2'],
-            'prefix': ['prefix', 'prefix2'],
-            'suffix': ['suffix', 'suffix2'],
-            'text': 'family given',
-            'use': 'official',
-            'period': {
-                'start': '2011-05-24',
-                'end': '2011-06-24'
-            }
+            "family": ["family", "family2"],
+            "given": ["given", "given2"],
+            "prefix": ["prefix", "prefix2"],
+            "suffix": ["suffix", "suffix2"],
+            "text": "family given",
+            "use": "official",
+            "period": {"start": "2011-05-24", "end": "2011-06-24"},
         }
     ]
-    telecom = [{
-        "rank": 2,
-        "system": "phone",
-        "use": "work",
-        "value": "+254712122988",
-        "period": {
-            "start": "2011-05-24",
-            "end": "2011-06-24"
+    telecom = [
+        {
+            "rank": 2,
+            "system": "phone",
+            "use": "work",
+            "value": "+254712122988",
+            "period": {"start": "2011-05-24", "end": "2011-06-24"},
         }
-    }]
-    gender = 'male'
-    birthDate = '1990-11-11'
+    ]
+    gender = "male"
+    birthDate = "1990-11-11"
     deceasedBoolean = False
     deceasedDateTime = None
-    address = [{
-        "use": "work",
-        "text": "text",
-        "type": "postal",
-        "state": "state",
-        "postal_code": "postal code",
-        "line": ["line1", "line2"],
-        "district": "district",
-        "country": "KEN",
-        "city": "city",
-        "period": {
-            "start": "2011-05-24",
-            "end": "2011-06-24"
+    address = [
+        {
+            "use": "work",
+            "text": "text",
+            "type": "postal",
+            "state": "state",
+            "postal_code": "postal code",
+            "line": ["line1", "line2"],
+            "district": "district",
+            "country": "KEN",
+            "city": "city",
+            "period": {"start": "2011-05-24", "end": "2011-06-24"},
         }
-    }]
+    ]
     maritalStatus = {
         "text": "text",
         "coding": [
@@ -97,26 +89,32 @@ class TestPatient(object):
                 "display": "display",
                 "system": "http://testing.test.com",
                 "userSelected": "True",
-                "version": "2.3"
-            }]
+                "version": "2.3",
+            }
+        ],
     }
     multipleBirthBoolean = False
     multipleBirthInteger = 0
     photo = None
-    contact = [{
-        "relationship": [{
-            "text": "text",
-            "coding": [
+    contact = [
+        {
+            "relationship": [
                 {
-                    "code": "family",
-                    "display": "display",
-                    "system": "http://testing.test.com",
-                    "userSelected": "True",
-                    "version": "2.3"
-                }]
-        }],
-        "gender": "male"
-    }]
+                    "text": "text",
+                    "coding": [
+                        {
+                            "code": "family",
+                            "display": "display",
+                            "system": "http://testing.test.com",
+                            "userSelected": "True",
+                            "version": "2.3",
+                        }
+                    ],
+                }
+            ],
+            "gender": "male",
+        }
+    ]
     animal = {
         "breed": {
             "text": "text",
@@ -126,8 +124,9 @@ class TestPatient(object):
                     "display": "display",
                     "system": "http://testing.test.com",
                     "userSelected": "True",
-                    "version": "2.3"
-                }]
+                    "version": "2.3",
+                }
+            ],
         },
         "genderStatus": {
             "text": "text",
@@ -137,8 +136,9 @@ class TestPatient(object):
                     "display": "display",
                     "system": "http://testing.test.com",
                     "userSelected": "True",
-                    "version": "2.3"
-                }]
+                    "version": "2.3",
+                }
+            ],
         },
         "species": {
             "text": "text",
@@ -148,44 +148,52 @@ class TestPatient(object):
                     "display": "display",
                     "system": "http://testing.test.com",
                     "userSelected": "True",
-                    "version": "2.3"
-                }]
-        }
+                    "version": "2.3",
+                }
+            ],
+        },
     }
-    communication = [{
-        "language": {
-            "text": "text",
-            "coding": [
-                {
-                    "code": "en",
-                    "display": "display",
-                    "system": "http://testing.test.com",
-                    "userSelected": "True",
-                    "version": "2.3"
-                }]
+    communication = [
+        {
+            "language": {
+                "text": "text",
+                "coding": [
+                    {
+                        "code": "en",
+                        "display": "display",
+                        "system": "http://testing.test.com",
+                        "userSelected": "True",
+                        "version": "2.3",
+                    }
+                ],
+            }
         }
-    }]
-    careProvider = [{
-        "display": "display",
-        "reference": "http://spark.furore.com/fhir/Organization/1"
-    }]
+    ]
+    careProvider = [
+        {
+            "display": "display",
+            "reference": "http://spark.furore.com/fhir/Organization/1",
+        }
+    ]
     managingOrganization = {
         "display": "display",
-        "reference": "http://spark.furore.com/fhir/Organization/1"
+        "reference": "http://spark.furore.com/fhir/Organization/1",
     }
-    link = [{
-        "other": {
-            "display": "display",
-            "reference": "http://spark.furore.com/fhir/Patient/1"
-        },
-        "type": "replace"
-    }]
+    link = [
+        {
+            "other": {
+                "display": "display",
+                "reference": "http://spark.furore.com/fhir/Patient/1",
+            },
+            "type": "replace",
+        }
+    ]
 
-    @patch('fhir_server.helpers.validations.requests.get')
+    @patch("fhir_server.helpers.validations.requests.get")
     def test_patient_repr(self, mock_get):
         mock_get.return_value.json.return_value = {
-            'count': len(self.valuesets_data),
-            'data': self.valuesets_data
+            "count": len(self.valuesets_data),
+            "data": self.valuesets_data,
         }
         data = Patient(
             id=self.id,

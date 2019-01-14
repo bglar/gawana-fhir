@@ -7,7 +7,8 @@ from fhir_server.configs import (
     LOCATION_STATUS_URL,
     LOCATION_MODE_URL,
     SERVICE_DELIVERY_LOCATION_ROLE_TYPE_URL,
-    LOCATION_PHYSICAL_TYPE_URI)
+    LOCATION_PHYSICAL_TYPE_URI,
+)
 from fhir_server.elements import primitives, complex
 from fhir_server.elements.base.backboneelement import BackboneElement
 from fhir_server.resources.domainresource import DomainResource
@@ -23,19 +24,20 @@ class LocationPosition(BackboneElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('longitude', {'mini': 1, 'maxi': 1},
-                  primitives.DecimalField, None),
-            # Longitude with WGS84 datum.
-
-            Field('latitude', {'mini': 1, 'maxi': 1},
-                  primitives.DecimalField, None),
-            # Latitude with WGS84 datum.
-
-            Field('altitude', {'mini': 0, 'maxi': 1},
-                  primitives.DecimalField, None)
-            # Altitude with WGS84 datum.
-        ])
+        elm.extend(
+            [
+                Field(
+                    "longitude", {"mini": 1, "maxi": 1}, primitives.DecimalField, None
+                ),
+                # Longitude with WGS84 datum.
+                Field(
+                    "latitude", {"mini": 1, "maxi": 1}, primitives.DecimalField, None
+                ),
+                # Latitude with WGS84 datum.
+                Field("altitude", {"mini": 0, "maxi": 1}, primitives.DecimalField, None)
+                # Altitude with WGS84 datum.
+            ]
+        )
         return elm
 
 
@@ -101,12 +103,9 @@ class Location(DomainResource):
         Dict. values in the dict should be a | separated string of
         reference resources"""
 
-        return {
-            "managingOrganization": "Organization",
-            "partOf": "Location"
-        }
+        return {"managingOrganization": "Organization", "partOf": "Location"}
 
-    @validates('managingOrganization', 'partOf')
+    @validates("managingOrganization", "partOf")
     def reference_fields(self, key, field):
         """Validates multiple reference fields.
 
@@ -125,42 +124,37 @@ class Location(DomainResource):
 
         return field
 
-    @validates('status')
+    @validates("status")
     def validate_location_status(self, key, status):
-        msg = 'location status'
+        msg = "location status"
         self.code_fields_validator(status, LOCATION_STATUS_URL, msg)
 
         return status
 
-    @validates('mode')
+    @validates("mode")
     def validate_location_mode(self, key, mode):
-        msg = 'location mode'
+        msg = "location mode"
         self.code_fields_validator(mode, LOCATION_MODE_URL, msg)
 
         return mode
 
-    @validates('type')
+    @validates("type")
     def validate_location_type(self, key, type):
-        msg = 'location type code'
-        self.code_fields_validator(
-            type, SERVICE_DELIVERY_LOCATION_ROLE_TYPE_URL, msg)
+        msg = "location type code"
+        self.code_fields_validator(type, SERVICE_DELIVERY_LOCATION_ROLE_TYPE_URL, msg)
 
         return type
 
-    @validates('physicalType')
+    @validates("physicalType")
     def validate_physical_type(self, key, physicalType):
-        msg = 'location physical type code'
-        self.code_fields_validator(
-            physicalType, LOCATION_PHYSICAL_TYPE_URI, msg)
+        msg = "location physical type code"
+        self.code_fields_validator(physicalType, LOCATION_PHYSICAL_TYPE_URI, msg)
 
         return physicalType
 
     def _resource_summary(self):
-        summary_fields = ['id', 'meta', 'identifier', 'name', ]
-        return {
-            'repr': '%r' % self.name,
-            'fields': summary_fields
-        }
+        summary_fields = ["id", "meta", "identifier", "name"]
+        return {"repr": "%r" % self.name, "fields": summary_fields}
 
     def __repr__(self):
-        return '<Location %r>' % self.name
+        return "<Location %r>" % self.name

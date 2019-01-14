@@ -18,24 +18,25 @@ class Annotation(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('authorString', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Individual responsible for the annotation.
-
-            Field('text', {'mini': 1, 'maxi': 1},
-                  primitives.StringField, None),
-            # The annotation  - text content.
-
-            Field('time', {'mini': 0, 'maxi': 1},
-                  primitives.DateTimeField, None),
-            # When the annotation was made.
-
-            Field('authorReference', {'mini': 0, 'maxi': 1},
-                  ReferenceField(),
-                  ['Practitioner', 'Patient', 'RelatedPerson']),
-            # Individual responsible for the annotation.
-        ])
+        elm.extend(
+            [
+                Field(
+                    "authorString", {"mini": 0, "maxi": 1}, primitives.StringField, None
+                ),
+                # Individual responsible for the annotation.
+                Field("text", {"mini": 1, "maxi": 1}, primitives.StringField, None),
+                # The annotation  - text content.
+                Field("time", {"mini": 0, "maxi": 1}, primitives.DateTimeField, None),
+                # When the annotation was made.
+                Field(
+                    "authorReference",
+                    {"mini": 0, "maxi": 1},
+                    ReferenceField(),
+                    ["Practitioner", "Patient", "RelatedPerson"],
+                ),
+                # Individual responsible for the annotation.
+            ]
+        )
         return elm
 
 

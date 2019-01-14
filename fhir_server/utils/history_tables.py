@@ -30,7 +30,7 @@ def _history_mapper(local_mapper):
         getattr(local_mapper.class_, prop.key).impl.active_history = True
 
     super_mapper = local_mapper.inherits
-    super_history_mapper = getattr(cls, '__history_mapper__', None)
+    super_history_mapper = getattr(cls, "__history_mapper__", None)
 
     polymorphic_on = None
     super_fks = []
@@ -38,14 +38,13 @@ def _history_mapper(local_mapper):
     def _col_copy(col):
         orig = col
         col = col.copy()
-        orig.info['history_copy'] = col
+        orig.info["history_copy"] = col
         col.unique = False
         col.default = col.server_default = None
         return col
 
     properties = util.OrderedDict()
-    if not super_mapper or \
-            local_mapper.local_table is not super_mapper.local_table:
+    if not super_mapper or local_mapper.local_table is not super_mapper.local_table:
         cols = []
         version_meta = {"version_meta": True}
         # add column.info to identify columns specific to versioning
@@ -56,13 +55,9 @@ def _history_mapper(local_mapper):
 
             col = _col_copy(column)
 
-            if super_mapper and \
-                    col_references_table(column, super_mapper.local_table):
+            if super_mapper and col_references_table(column, super_mapper.local_table):
                 super_fks.append(
-                    (
-                        col.key,
-                        list(super_history_mapper.local_table.primary_key)[0]
-                    )
+                    (col.key, list(super_history_mapper.local_table.primary_key)[0])
                 )
 
             cols.append(col)
@@ -72,16 +67,16 @@ def _history_mapper(local_mapper):
 
             orig_prop = local_mapper.get_property_by_column(column)
             # carry over column re-mappings
-            if len(orig_prop.columns) > 1 or \
-                    orig_prop.columns[0].key != orig_prop.key:
+            if len(orig_prop.columns) > 1 or orig_prop.columns[0].key != orig_prop.key:
                 properties[orig_prop.key] = tuple(
-                    col.info['history_copy'] for col in orig_prop.columns)
+                    col.info["history_copy"] for col in orig_prop.columns
+                )
 
         if super_mapper:
             super_fks.append(
                 (
-                    'resource_version',
-                    super_history_mapper.local_table.c.resource_version
+                    "resource_version",
+                    super_history_mapper.local_table.c.resource_version,
                 )
             )
 
@@ -89,22 +84,31 @@ def _history_mapper(local_mapper):
         # required.
         cols.append(
             Column(
-                'resource_version', Integer, primary_key=True,
-                autoincrement=False, info=version_meta))
+                "resource_version",
+                Integer,
+                primary_key=True,
+                autoincrement=False,
+                info=version_meta,
+            )
+        )
 
         # "changed" column stores the UTC timestamp of when the
         # history row was created.
         # This column is optional and can be omitted.
-        cols.append(Column(
-            'resource_changed', DateTime,
-            default=datetime.datetime.utcnow,
-            info=version_meta))
+        cols.append(
+            Column(
+                "resource_changed",
+                DateTime,
+                default=datetime.datetime.utcnow,
+                info=version_meta,
+            )
+        )
 
         if super_fks:
             cols.append(ForeignKeyConstraint(*zip(*super_fks)))
 
         table = Table(
-            local_mapper.local_table.name + '_history',
+            local_mapper.local_table.name + "_history",
             local_mapper.local_table.metadata,
             *cols,
             schema=local_mapper.local_table.schema
@@ -122,9 +126,8 @@ def _history_mapper(local_mapper):
         bases = (super_history_mapper.class_,)
 
         if table is not None:
-            properties['resource_changed'] = (
-                (table.c.resource_changed, ) +
-                tuple(super_history_mapper.attrs.resource_changed.columns)
+            properties["resource_changed"] = (table.c.resource_changed,) + tuple(
+                super_history_mapper.attrs.resource_changed.columns
             )
 
     else:
@@ -137,16 +140,17 @@ def _history_mapper(local_mapper):
         inherits=super_history_mapper,
         polymorphic_on=polymorphic_on,
         polymorphic_identity=local_mapper.polymorphic_identity,
-        properties=properties
+        properties=properties,
     )
     cls.__history_mapper__ = m
 
     if not super_history_mapper:
         local_mapper.local_table.append_column(
-            Column('resource_version', Integer, default=1, nullable=False)
+            Column("resource_version", Integer, default=1, nullable=False)
         )
         local_mapper.add_property(
-            "resource_version", local_mapper.local_table.c.resource_version)
+            "resource_version", local_mapper.local_table.c.resource_version
+        )
 
 
 class Versioned(object):
@@ -156,12 +160,13 @@ class Versioned(object):
             mp = mapper(cls, *arg, **kw)
             _history_mapper(mp)
             return mp
+
         return map
 
 
 def versioned_objects(iter):
     for obj in iter:
-        if hasattr(obj, '__history_mapper__'):
+        if hasattr(obj, "__history_mapper__"):
             yield obj
 
 
@@ -176,10 +181,7 @@ def create_version(obj, session, deleted=False):
 
     obj_changed = False
 
-    for om, hm in zip(
-            obj_mapper.iterate_to_root(),
-            history_mapper.iterate_to_root()
-    ):
+    for om, hm in zip(obj_mapper.iterate_to_root(), history_mapper.iterate_to_root()):
         if hm.single:
             continue
 
@@ -224,10 +226,12 @@ def create_version(obj, session, deleted=False):
         # not changed, but we have relationships.  OK
         # check those too
         for prop in obj_mapper.iterate_properties:
-            if isinstance(prop, RelationshipProperty) and \
-                attributes.get_history(
-                    obj, prop.key,
-                    passive=attributes.PASSIVE_NO_INITIALIZE).has_changes():
+            if (
+                isinstance(prop, RelationshipProperty)
+                and attributes.get_history(
+                    obj, prop.key, passive=attributes.PASSIVE_NO_INITIALIZE
+                ).has_changes()
+            ):
                 for p in prop.local_columns:
                     if p.foreign_keys:
                         obj_changed = True
@@ -238,7 +242,7 @@ def create_version(obj, session, deleted=False):
     if not obj_changed and not deleted:
         return
 
-    attr['resource_version'] = obj.resource_version
+    attr["resource_version"] = obj.resource_version
     hist = history_cls()
     for key, value in attr.items():
         setattr(hist, key, value)
@@ -247,7 +251,7 @@ def create_version(obj, session, deleted=False):
 
 
 def versioned_session(session):
-    @event.listens_for(session, 'before_flush')
+    @event.listens_for(session, "before_flush")
     def before_flush(session, flush_context, instances):
         for obj in versioned_objects(session.dirty):
             create_version(obj, session)

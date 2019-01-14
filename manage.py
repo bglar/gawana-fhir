@@ -16,9 +16,9 @@ def create_my_app(config=None):
     return app
 
 
-migrations_path = '/migrations/versions/'
+migrations_path = "/migrations/versions/"
 app = create_my_app()
-app.config.from_object(os.environ['APP_SETTINGS'])
+app.config.from_object(os.environ["APP_SETTINGS"])
 
 app = create_app()
 conn = db.session.connection()
@@ -26,18 +26,17 @@ register_composites(conn)
 
 migrate = Migrate(app, db)
 manager = Manager(app)
-manager.add_command('db', MigrateCommand)
-manager.add_option('-c', '--config',
-                   dest="config",
-                   required=False,
-                   help="config [local, dev, prod]")
+manager.add_command("db", MigrateCommand)
+manager.add_option(
+    "-c", "--config", dest="config", required=False, help="config [local, dev, prod]"
+)
 
 
 @manager.command
 def run():
     """Run in local machine."""
     port = int(os.environ.get("PORT", 5000))
-    current_app.run(host='0.0.0.0', port=port, debug=True)
+    current_app.run(host="0.0.0.0", port=port, debug=True)
 
 
 @manager.command
@@ -55,14 +54,14 @@ def clean_migrations():
     Migrations for complex types generate a table=None argument for all the
     resources. We should inspect the files and remove this argument"""
 
-    path = os.path.realpath('.') + migrations_path
+    path = os.path.realpath(".") + migrations_path
     for subdir, dirs, files in os.walk(path):
         for file in [pyfiles for pyfiles in files if pyfiles.endswith(".py")]:
             for line in fileinput.input(os.path.join(path, file), inplace=1):
-                sys.stdout.write(line.replace(', table=None', ''))
+                sys.stdout.write(line.replace(", table=None", ""))
 
 
-@app.route('/')
+@app.route("/")
 @oauth.require_oauth()
 def api_index():
     """Glar FHIR Server
@@ -173,7 +172,7 @@ def api_index():
     """
 
     links = []
-    domain = app.config['DOMAIN_NAME']
+    domain = app.config["DOMAIN_NAME"]
 
     def has_no_empty_params(rule):
         defaults = rule.defaults if rule.defaults is not None else ()
@@ -185,12 +184,12 @@ def api_index():
         # and rules that require parameters
         if "GET" in rule.methods and has_no_empty_params(rule):
             url = url_for(rule.endpoint, **(rule.defaults or {}))
-            links.append('http://' + domain + url)
+            links.append("http://" + domain + url)
 
     # return "Hello, %s!" % g.user
     return links
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     manager.run()
     register_composites(conn)

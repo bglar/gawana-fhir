@@ -19,19 +19,19 @@ def regex_checker(some_str, regex):
 
 def validate_local_times(value):
     date_obj = value
-    seperator = ['+', '-', 'Z']
+    seperator = ["+", "-", "Z"]
 
     if isinstance(value, str):
         for sep in seperator:
             value = (value.split(sep))[0]
 
         try:
-            date_obj = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
+            date_obj = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
         except Exception:
             pass
 
         try:
-            date_obj = datetime.strptime(value, '%Y-%m-%dT%H:%M')
+            date_obj = datetime.strptime(value, "%Y-%m-%dT%H:%M")
         except Exception:
             pass
 
@@ -43,21 +43,23 @@ def validate_local_times(value):
                 tz.localize(date_obj, is_dst=None)
             except Exception:
                 raise pytz.exceptions.AmbiguousTimeError(
-                    'Ambiguous Time Error for %s' % value)
+                    "Ambiguous Time Error for %s" % value
+                )
 
 
 class BooleanField(types.TypeDecorator):
     """
     true or false values (0 and 1 are not valid values) and
     should cater for optional boolean fields """
+
     impl = types.Boolean
 
     def process_bind_param(self, value, dialect):
         # Override to exclude 1s and 0s
-        if str(value) in ['1', '0']:
+        if str(value) in ["1", "0"]:
             raise TypeError(
-                '{} is an invalid value for the fhir boolean field'.format(
-                    value))
+                "{} is an invalid value for the fhir boolean field".format(value)
+            )
         return value
 
     def process_result_value(self, value, dialect):
@@ -80,7 +82,8 @@ class UnsignedIntField(types.TypeDecorator):
         if value is not None:
             if value < 0:
                 raise TypeError(
-                    'Value %s must be an int greater than or equal 0' % value)
+                    "Value %s must be an int greater than or equal 0" % value
+                )
 
         return value
 
@@ -100,8 +103,8 @@ class PositiveIntField(UnsignedIntField):
         if value is not None:
             if value <= 0:
                 raise TypeError(
-                    'Value %s must be a positive integer greater than 0' % (
-                        value))
+                    "Value %s must be a positive integer greater than 0" % (value)
+                )
         return value
 
 
@@ -110,6 +113,7 @@ class DecimalField(types.TypeDecorator):
     Rational numbers that have a decimal representation.
     Note: decimals may not use exponents, and leading 0 digits are not allowed
     """
+
     impl = types.Numeric
 
     def process_bind_param(self, value, dialect):
@@ -119,7 +123,7 @@ class DecimalField(types.TypeDecorator):
             try:
                 decimal_val = Decimal(str(value))
             except Exception:
-                raise ValueError('Invalid literal for Decimal: %s' % value)
+                raise ValueError("Invalid literal for Decimal: %s" % value)
 
         return decimal_val
 
@@ -139,11 +143,12 @@ class StringField(types.TypeDecorator):
         size = sys.getsizeof(value)  # Returns size of the string in bytes
 
         if isinstance(value, bytes):
-            raise TypeError('This field expects unicode string'
-                            ' but an encoded string was given')
+            raise TypeError(
+                "This field expects unicode string" " but an encoded string was given"
+            )
 
-        if size > 1048576:
-            raise TypeError('String value must not exceed 1MB')
+        if size > 1_048_576:
+            raise TypeError("String value must not exceed 1MB")
 
         return value
 
@@ -166,16 +171,18 @@ class InstantField(types.TypeDecorator):
     impl = types.DateTime(timezone=True)
 
     def process_bind_param(self, value, dialect):
-        regex = ('-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])'
-                 'T([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?(\.[0-9]+)?'
-                 '(Z|(\+|-))((0[0-9]|1[0-3])[0-5][0-9]|1400)?)?)?')
+        regex = (
+            "-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])"
+            "T([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?(\.[0-9]+)?"
+            "(Z|(\+|-))((0[0-9]|1[0-3])[0-5][0-9]|1400)?)?)?"
+        )
 
         if value is not None:
             if isinstance(value, datetime):
-                value = datetime.strftime(value, '%Y-%m-%dT%H:%M:%S%z')
+                value = datetime.strftime(value, "%Y-%m-%dT%H:%M:%S%z")
 
             if not (regex_checker(value, regex)):
-                raise TypeError('The Instant %s is invalid' % value)
+                raise TypeError("The Instant %s is invalid" % value)
 
         return value
 
@@ -192,15 +199,15 @@ class DateField(types.TypeDecorator):
     There is no time zone. Dates SHALL be valid dates.
     date is a union of the w3c schema types date, gYearMonth, and gYear
     """
+
     impl = types.Date
 
     def process_bind_param(self, value, dialect):
-        regex = '-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1]))?)?'
+        regex = "-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1]))?)?"
 
         if value is not None:
             if not (regex_checker(value, regex)):
-                raise TypeError(
-                    'The Date %s is invalid' % value)
+                raise TypeError("The Date %s is invalid" % value)
 
         return value
 
@@ -218,16 +225,19 @@ class DateTimeField(types.TypeDecorator):
     zero-filled and may be ignored. Dates SHALL be valid dates.
     The time "24:00" is not allowed
     """
+
     impl = types.DateTime(timezone=True)
 
     def process_bind_param(self, value, dialect):
-        regex = ('-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])'
-                 '(T([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?(\.[0-9]+)?'
-                 '(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00)))?)?)?')
+        regex = (
+            "-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])"
+            "(T([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?(\.[0-9]+)?"
+            "(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00)))?)?)?"
+        )
 
         if value is not None:
             if not (regex_checker(value, regex)):
-                raise TypeError('The DateTime %s is invalid' % value)
+                raise TypeError("The DateTime %s is invalid" % value)
 
             validate_local_times(value)
 
@@ -244,27 +254,30 @@ class TimeField(types.TypeDecorator):
     type constraints but may be zero-filled and may be ignored. The time
     "24:00" is not allowed, and neither is a time zone
     """
+
     impl = types.Time
 
     def process_bind_param(self, value, dialect):
-        regex = '([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?'
+        regex = "([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?"
         res_value = value
 
         if value is not None:
             try:
                 if isinstance(value, str):
-                    time_obj = time(*map(int, value.split(':')))
+                    time_obj = time(*map(int, value.split(":")))
                     res_value = time_obj.strftime("%H:%M:%S")
                 elif isinstance(value, time):
                     res_value = value.strftime("%H:%M:%S")
 
             except Exception:
-                raise ValueError("Time field expects valid str or time object "
-                                 "but %s was given" % (type(value)))
+                raise ValueError(
+                    "Time field expects valid str or time object "
+                    "but %s was given" % (type(value))
+                )
 
             else:
                 if not (regex_checker(res_value, regex)):
-                    raise TypeError('The Time %s is invalid' % value)
+                    raise TypeError("The Time %s is invalid" % value)
 
         return res_value
 
@@ -278,10 +291,11 @@ class URIField(types.UserDefinedType):
     """
     A Uniform Resource Identifier Reference (RFC 3986 ).
     Note: URIs are case sensitive. """
+
     impl = types.UnicodeText
 
     def get_col_spec(self, **kw):
-        return 'URI'
+        return "URI"
 
     def bind_processor(self, dialect):
         def process(value):
@@ -303,11 +317,11 @@ class OIDField(URIField):
 
     def bind_processor(self, dialect):
         def process(value):
-            regex = 'urn:oid:[0-2](\.[1-9]\d*)+'
+            regex = "urn:oid:[0-2](\.[1-9]\d*)+"
 
             if value is not None:
                 if not (regex_checker(value, regex)):
-                    raise TypeError('This OID is invalid')
+                    raise TypeError("This OID is invalid")
             return value
 
         return process
@@ -324,17 +338,17 @@ class IdField(types.TypeDecorator):
     impl = types.UnicodeText
 
     def process_bind_param(self, value, dialect):
-        regex = '[A-Za-z0-9\-\.]{1,64}'
+        regex = "[A-Za-z0-9\-\.]{1,64}"
 
         if value is not None:
             if len(value) > 64:
-                raise ValueError('Id field cannot be more than 64 characters')
+                raise ValueError("Id field cannot be more than 64 characters")
 
             if len(value) < 1:
-                raise ValueError('Id must have at least 1 character')
+                raise ValueError("Id must have at least 1 character")
 
             if not (regex_checker(value, regex)):
-                raise TypeError('Id: {} is not a valid id'.format(value))
+                raise TypeError("Id: {} is not a valid id".format(value))
 
         return value
 
@@ -354,18 +368,19 @@ class CodeField(StringField):
 
     def process_bind_param(self, value, dialect):
         size = sys.getsizeof(value)  # Returns size of the string in bytes
-        regex = '[^\s]+([\s]+[^\s]+)*'
+        regex = "[^\s]+([\s]+[^\s]+)*"
 
         if value is not None:
-            if size > 1048576:
-                raise TypeError('Code value must not exceed 1MB')
+            if size > 1_048_576:
+                raise TypeError("Code value must not exceed 1MB")
 
             if not (regex_checker(value, regex)):
-                raise TypeError(f'This Code: {value} is invalid')
+                raise TypeError(f"This Code: {value} is invalid")
 
             if re.search(r"(\s\s)+", value):
-                raise TypeError('Code must not have a whitespace more '
-                                'than a single character')
+                raise TypeError(
+                    "Code must not have a whitespace more " "than a single character"
+                )
 
         return value
 
@@ -374,6 +389,7 @@ class Base64Field(types.TypeDecorator):  # TODO test for all edge cases
     """
     A stream of bytes, base64 encoded (RFC 4648)
     """
+
     impl = types.UnicodeText
 
     def process_bind_param(self, value, dialect):
@@ -382,8 +398,8 @@ class Base64Field(types.TypeDecorator):  # TODO test for all edge cases
             print(raw_byte)
             value = base64.b64encode(raw_byte)
             size = sys.getsizeof(value)  # Returns size in bytes
-            if size > 262144000:  # pragma: no cover
-                raise TypeError('Base64 value must not exceed 250MB')
+            if size > 262_144_000:  # pragma: no cover
+                raise TypeError("Base64 value must not exceed 250MB")
 
         return value
 
@@ -393,10 +409,10 @@ class Base64Field(types.TypeDecorator):  # TODO test for all edge cases
             return value
 
         if type(value) is str:
-            db_val = base64.b64encode(bytes(value, 'utf-8'))
+            db_val = base64.b64encode(bytes(value, "utf-8"))
 
         decoded = base64.b64decode(db_val)
-        string = decoded.decode('utf-8')
+        string = decoded.decode("utf-8")
         return string
 
 
@@ -408,13 +424,27 @@ class MarkdownField(types.TypeDecorator):
     impl = types.UnicodeText
 
     def process_bind_param(self, value, dialect):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
-                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p']
+        allowed_tags = [
+            "a",
+            "abbr",
+            "acronym",
+            "b",
+            "blockquote",
+            "code",
+            "em",
+            "i",
+            "li",
+            "ol",
+            "pre",
+            "strong",
+            "ul",
+            "h1",
+            "h2",
+            "h3",
+            "p",
+        ]
 
-        result = bleach.clean(
-            value, tags=allowed_tags, strip=True
-        )
+        result = bleach.clean(value, tags=allowed_tags, strip=True)
 
         return result
 

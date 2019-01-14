@@ -2,7 +2,11 @@ from sqlalchemy import Column
 from sqlalchemy_utils import CompositeArray as Array
 
 from fhir_server.elements import (
-    primitives, complex, Field, ComplexElement, ElementDefinitionField
+    primitives,
+    complex,
+    Field,
+    ComplexElement,
+    ElementDefinitionField,
 )
 from fhir_server.resources.domainresource import DomainResource
 
@@ -15,15 +19,19 @@ class StructureDefinitionContact(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('name', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Name of a individual to contact.
-
-            Field('telecom', {'mini': 0, 'maxi': -1},
-                  complex.ContactPointField(), None)
-            # Contact details for individual or publisher.
-        ])
+        elm.extend(
+            [
+                Field("name", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # Name of a individual to contact.
+                Field(
+                    "telecom",
+                    {"mini": 0, "maxi": -1},
+                    complex.ContactPointField(),
+                    None,
+                )
+                # Contact details for individual or publisher.
+            ]
+        )
         return elm
 
 
@@ -38,23 +46,18 @@ class StructureDefinitionMapping(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('identity', {'mini': 1, 'maxi': 1},
-                  primitives.IdField, None),
-            # Internal id when this mapping is used.
-
-            Field('uri', {'mini': 0, 'maxi': 1},
-                  primitives.URIField, None),
-            # Identifies what this mapping refers to.
-
-            Field('name', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # Names what this mapping refers to.
-
-            Field('comments', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None)
-            # Versions, Issues, Scope limitations etc..
-        ])
+        elm.extend(
+            [
+                Field("identity", {"mini": 1, "maxi": 1}, primitives.IdField, None),
+                # Internal id when this mapping is used.
+                Field("uri", {"mini": 0, "maxi": 1}, primitives.URIField, None),
+                # Identifies what this mapping refers to.
+                Field("name", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # Names what this mapping refers to.
+                Field("comments", {"mini": 0, "maxi": 1}, primitives.StringField, None)
+                # Versions, Issues, Scope limitations etc..
+            ]
+        )
         return elm
 
 
@@ -70,12 +73,15 @@ class StructureDefinitionDifferential(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('element', {'mini': 1, 'maxi': -1},
-                  ElementDefinitionField(), None)
-            # Definition of elements in the resource
-            # (if no StructureDefinition).
-        ])
+        elm.extend(
+            [
+                Field(
+                    "element", {"mini": 1, "maxi": -1}, ElementDefinitionField(), None
+                )
+                # Definition of elements in the resource
+                # (if no StructureDefinition).
+            ]
+        )
         return elm
 
 
@@ -91,12 +97,13 @@ class StructureDefinitionSnapshot(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('element', {'mini': 1, 'maxi': 1},
-                  ElementDefinitionField(), None)
-            # Definition of elements in the resource
-            # (if no StructureDefinition).
-        ])
+        elm.extend(
+            [
+                Field("element", {"mini": 1, "maxi": 1}, ElementDefinitionField(), None)
+                # Definition of elements in the resource
+                # (if no StructureDefinition).
+            ]
+        )
         return elm
 
 
@@ -187,8 +194,5 @@ class StructureDefinition(DomainResource):
     # Snapshot view of the structure.
 
     def _resource_summary(self):
-        summary_fields = ['id', 'meta', 'identifier', 'description', ]
-        return {
-            'repr': '%r' % self.description,
-            'fields': summary_fields
-        }
+        summary_fields = ["id", "meta", "identifier", "description"]
+        return {"repr": "%r" % self.description, "fields": summary_fields}

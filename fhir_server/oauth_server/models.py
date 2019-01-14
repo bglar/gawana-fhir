@@ -29,6 +29,7 @@ class Fhiruser(db.Model):
 
     def get_id(self):
         return self.id
+
     #
     # def set_password(self, password):
     #     self.pwdhash = generate_password_hash(password)
@@ -47,6 +48,7 @@ class Client(db.Model):
     It is suggested that the client is registered by a user on your site,
     but it is not required.
     """
+
     # human readable name, not required
     name = db.Column(db.String(40))
 
@@ -54,12 +56,11 @@ class Client(db.Model):
     description = db.Column(db.String(400))
 
     # creator of the client, not required
-    user_id = sa.Column(sa.ForeignKey('fhiruser.id'))
-    user = db.relationship('Fhiruser')
+    user_id = sa.Column(sa.ForeignKey("fhiruser.id"))
+    user = db.relationship("Fhiruser")
 
     client_id = sa.Column(sa.String(40), primary_key=True)
-    client_secret = sa.Column(sa.String(55), unique=True, index=True,
-                              nullable=False)
+    client_secret = sa.Column(sa.String(55), unique=True, index=True, nullable=False)
 
     # public or confidential ( client_type )
     is_confidential = db.Column(db.Boolean, default=False)
@@ -70,8 +71,8 @@ class Client(db.Model):
     @property
     def client_type(self):
         if self.is_confidential:
-            return 'confidential'
-        return 'public'
+            return "confidential"
+        return "public"
 
     @property
     def redirect_uris(self):
@@ -91,8 +92,7 @@ class Client(db.Model):
 
     @property
     def allowed_grant_types(self):
-        return ['authorization_code', 'password', 'client_credentials',
-                'refresh_token']
+        return ["authorization_code", "password", "client_credentials", "refresh_token"]
 
 
 class Grant(db.Model):
@@ -102,18 +102,16 @@ class Grant(db.Model):
     In this case, it would be better to store the data in a cache,
     which would benefit a better performance.
     """
+
     id = sa.Column(sa.Integer, primary_key=True)
 
-    user_id = sa.Column(
-        sa.Integer, sa.ForeignKey('fhiruser.id', ondelete='CASCADE')
-    )
-    user = db.relationship('Fhiruser')
+    user_id = sa.Column(sa.Integer, sa.ForeignKey("fhiruser.id", ondelete="CASCADE"))
+    user = db.relationship("Fhiruser")
 
     client_id = sa.Column(
-        sa.String(40), sa.ForeignKey('client.client_id'),
-        nullable=False,
+        sa.String(40), sa.ForeignKey("client.client_id"), nullable=False
     )
-    client = db.relationship('Client')
+    client = db.relationship("Client")
 
     code = sa.Column(sa.String(255), index=True, nullable=False)
 
@@ -136,17 +134,15 @@ class Grant(db.Model):
 
 class Token(db.Model):
     """A bearer: the final token that could be used by the client."""
+
     id = sa.Column(sa.Integer, primary_key=True)
     client_id = sa.Column(
-        sa.String(40), sa.ForeignKey('client.client_id'),
-        nullable=False,
+        sa.String(40), sa.ForeignKey("client.client_id"), nullable=False
     )
-    client = db.relationship('Client')
+    client = db.relationship("Client")
 
-    user_id = sa.Column(
-        sa.Integer, sa.ForeignKey('fhiruser.id')
-    )
-    user = db.relationship('Fhiruser')
+    user_id = sa.Column(sa.Integer, sa.ForeignKey("fhiruser.id"))
+    user = db.relationship("Fhiruser")
 
     # currently only bearer is supported
     token_type = sa.Column(sa.String(40))
@@ -169,8 +165,8 @@ class Token(db.Model):
 
 
 def current_user():
-    if 'id' in session:
-        uid = session['id']
+    if "id" in session:
+        uid = session["id"]
         return Fhiruser.query.get(uid)
     return None
 
@@ -178,10 +174,9 @@ def current_user():
 def cache_provider(app):
     oauth = OAuth2Provider(app)
 
-    bind_sqlalchemy(oauth, db.session, user=Fhiruser,
-                    token=Token, client=Client)
+    bind_sqlalchemy(oauth, db.session, user=Fhiruser, token=Token, client=Client)
 
-    app.config.update({'OAUTH2_CACHE_TYPE': 'simple'})
+    app.config.update({"OAUTH2_CACHE_TYPE": "simple"})
     bind_cache_grant(app, oauth, current_user)
     return oauth
 
@@ -189,7 +184,14 @@ def cache_provider(app):
 def sqlalchemy_provider(app):
     oauth = OAuth2Provider(app)
 
-    bind_sqlalchemy(oauth, db.session, user=Fhiruser, token=Token,
-                    client=Client, grant=Grant, current_user=current_user)
+    bind_sqlalchemy(
+        oauth,
+        db.session,
+        user=Fhiruser,
+        token=Token,
+        client=Client,
+        grant=Grant,
+        current_user=current_user,
+    )
 
     return oauth

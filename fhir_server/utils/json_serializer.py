@@ -49,11 +49,21 @@ class ElementSerializer(object):
 
         # This removes unnecessary attributes from a response
         for field in [
-            x for x, y in getmembers(self) if not(ismethod(y)) and
-            not x.startswith('_') and not x.startswith('query') and not
-            x.startswith('references') and x not in [
-                'updated_at', 'is_deleted', 'deleted_at', 'resource_version',
-                'created_at', 'metadata']
+            x
+            for x, y in getmembers(self)
+            if not (ismethod(y))
+            and not x.startswith("_")
+            and not x.startswith("query")
+            and not x.startswith("references")
+            and x
+            not in [
+                "updated_at",
+                "is_deleted",
+                "deleted_at",
+                "resource_version",
+                "created_at",
+                "metadata",
+            ]
         ]:
             values = self.__getattribute__(field)
             if isinstance(values, datetime.date):
@@ -66,7 +76,7 @@ class ElementSerializer(object):
                         values[key] = self._unpack_tuple(val)
 
             # Deserialize composite types
-            if str(values).startswith('fhir_'):
+            if str(values).startswith("fhir_"):
                 keys = values._fields
                 for key in keys:
                     key_values = values.__getattribute__(key)

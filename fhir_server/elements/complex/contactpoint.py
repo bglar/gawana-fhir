@@ -20,27 +20,22 @@ class ContactPoint(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('rank', {'mini': 0, 'maxi': 1},
-                  primitives.PositiveIntField, None),
-            # Specify preferred order of use (1 = highest).
-
-            Field('system', {'mini': 0, 'maxi': 1},
-                  primitives.CodeField, None),
-            # phone | fax | email | pager | other.
-
-            Field('use', {'mini': 0, 'maxi': 1},
-                  primitives.CodeField, None),
-            # home | work | temp | old | mobile-purpose of this contact point.
-
-            Field('value', {'mini': 0, 'maxi': 1},
-                  primitives.StringField, None),
-            # The actual contact point details.
-
-            Field('period', {'mini': 0, 'maxi': 1},
-                  PeriodField(), None)
-            # Time period when the contact point was/is in use.
-        ])
+        elm.extend(
+            [
+                Field(
+                    "rank", {"mini": 0, "maxi": 1}, primitives.PositiveIntField, None
+                ),
+                # Specify preferred order of use (1 = highest).
+                Field("system", {"mini": 0, "maxi": 1}, primitives.CodeField, None),
+                # phone | fax | email | pager | other.
+                Field("use", {"mini": 0, "maxi": 1}, primitives.CodeField, None),
+                # home | work | temp | old | mobile-purpose of this contact point.
+                Field("value", {"mini": 0, "maxi": 1}, primitives.StringField, None),
+                # The actual contact point details.
+                Field("period", {"mini": 0, "maxi": 1}, PeriodField(), None)
+                # Time period when the contact point was/is in use.
+            ]
+        )
         return elm
 
 

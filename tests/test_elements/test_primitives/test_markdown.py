@@ -6,34 +6,39 @@ from sqlalchemy import Column
 class TestMarkdownField(object):
     def test_markdown_paragraph(self):
         result = primitives.MarkdownField().process_bind_param(
-            'paragraph string for markdown', 'postgres')
-        assert result == 'paragraph string for markdown'
+            "paragraph string for markdown", "postgres"
+        )
+        assert result == "paragraph string for markdown"
 
     def test_markdown_emphasis(self):
         result = primitives.MarkdownField().process_bind_param(
-            '**Bold** *italic* [Link](http://a.com)', 'postgres')
-        assert result == '**Bold** *italic* [Link](http://a.com)'
+            "**Bold** *italic* [Link](http://a.com)", "postgres"
+        )
+        assert result == "**Bold** *italic* [Link](http://a.com)"
 
     def test_process_result_value(self):
         result = primitives.MarkdownField().process_result_value(
-            'paragraph string for markdown', 'postgres')
-        assert result == 'paragraph string for markdown'
+            "paragraph string for markdown", "postgres"
+        )
+        assert result == "paragraph string for markdown"
 
     @pytest.fixture
     def TestDataTypesModel(self, Base, session):
         class TestDataTypesModel(Base):
-            __tablename__ = 'circle_test'
+            __tablename__ = "circle_test"
             id = Column(primitives.IdField, primary_key=True)
             markdown_field = Column(primitives.StringField)
 
-        session.execute("""
+        session.execute(
+            """
             CREATE TABLE circle_test (
-                id TEXT, markdown_field TEXT);""")
+                id TEXT, markdown_field TEXT);"""
+        )
 
         return TestDataTypesModel
 
     def test_valid_markdown_document(self, session, TestDataTypesModel):
-        mark = '''
+        mark = """
         # Heading 1
 
         some paragraph text for markdown_field that should be
@@ -90,12 +95,9 @@ class TestMarkdownField(object):
         ##### H5
 
         ###### H6
-        '''
+        """
 
-        post_data = TestDataTypesModel(
-            id="yiydidbh",
-            markdown_field=mark
-        )
+        post_data = TestDataTypesModel(id="yiydidbh", markdown_field=mark)
 
         session.add(post_data)
         session.commit()

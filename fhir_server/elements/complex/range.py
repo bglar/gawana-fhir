@@ -17,15 +17,14 @@ class Range(ComplexElement):
 
     def element_properties(self):
         elm = super().element_properties()
-        elm.extend([
-            Field('high', {'mini': 0, 'maxi': 1},
-                  SimpleQuantityField(), None),
-            # High limit.
-
-            Field('low', {'mini': 0, 'maxi': 1},
-                  SimpleQuantityField(), None)
-            # Low limit.
-        ])
+        elm.extend(
+            [
+                Field("high", {"mini": 0, "maxi": 1}, SimpleQuantityField(), None),
+                # High limit.
+                Field("low", {"mini": 0, "maxi": 1}, SimpleQuantityField(), None)
+                # Low limit.
+            ]
+        )
         return elm
 
 

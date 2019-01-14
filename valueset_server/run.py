@@ -17,22 +17,22 @@ def get_data_from_json(file_path):
     :return:
     """
     try:
-        with open(file_path, 'r') as file_open:
+        with open(file_path, "r") as file_open:
             data = json.load(file_open)
             return data
     except FileNotFoundError:
         raise
 
 
-@valueset_app.route('/', methods=['GET', ])
+@valueset_app.route("/", methods=["GET"])
 def home():
     return "Simple Valueset Server"
 
 
-@valueset_app.route('/<valueset>/', methods=['GET', ])
+@valueset_app.route("/<valueset>/", methods=["GET"])
 def valueset_type(valueset):
-    valueset += '.json'
-    data = get_data_from_json(BASE_DIR + f'/valueset_server/data/{valueset}')
+    valueset += ".json"
+    data = get_data_from_json(BASE_DIR + f"/valueset_server/data/{valueset}")
 
     get_data = data
     if request.args:
@@ -50,4 +50,4 @@ def valueset_type(valueset):
             except AttributeError:
                 raise  # TODO pass through some error handler
 
-    return jsonify({'data': get_data, 'count': len(get_data)})
+    return jsonify({"data": get_data, "count": len(get_data)})

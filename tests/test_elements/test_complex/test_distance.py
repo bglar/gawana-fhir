@@ -11,36 +11,34 @@ from fhir_server.elements.complex.distance import DistanceField
 
 
 class TestDistance(object):
-
     @pytest.fixture
     def TestDistanceModel(self, Base):
         class TestDistanceModel(Base):
-            __tablename__ = 'test_distance'
+            __tablename__ = "test_distance"
             id = Column(primitives.IntegerField, primary_key=True)
             distance = Column(DistanceField())
+
         return TestDistanceModel
 
-    @patch('fhir_server.helpers.validations.requests.get')
+    @patch("fhir_server.helpers.validations.requests.get")
     def test_post_data(self, mock_get, session, TestDistanceModel):
-        mock_get.return_value.json.return_value = {
-            'count': 2,
-            'data': [
-                {'code': '<'}
-            ]}
+        mock_get.return_value.json.return_value = {"count": 2, "data": [{"code": "<"}]}
         post = TestDistanceModel(
             id=1,
             distance={
-                'code': 'code',
-                'system': 'system',
-                'unit': 'kg',
-                'value': 2.400023,
-                'comparator': '<'
-            }
+                "code": "code",
+                "system": "system",
+                "unit": "kg",
+                "value": 2.400023,
+                "comparator": "<",
+            },
         )
 
-        session.execute("""
+        session.execute(
+            """
             CREATE TABLE test_distance (
-                id INTEGER, distance fhir_distance);""")
+                id INTEGER, distance fhir_distance);"""
+        )
 
         session.add(post)
 
@@ -48,18 +46,16 @@ class TestDistance(object):
         session.commit()
         get = session.query(TestDistanceModel).first()
         assert get.id == 1
-        assert get.distance.value == Decimal('2.400023')
+        assert get.distance.value == Decimal("2.400023")
 
-    def test_post_data_with_null_distance_field(
-            self, session, TestDistanceModel):
-        post = TestDistanceModel(
-            id=1,
-            distance={}
-        )
+    def test_post_data_with_null_distance_field(self, session, TestDistanceModel):
+        post = TestDistanceModel(id=1, distance={})
 
-        session.execute("""
+        session.execute(
+            """
             CREATE TABLE test_distance (
-                id INTEGER, distance fhir_distance);""")
+                id INTEGER, distance fhir_distance);"""
+        )
 
         session.add(post)
 

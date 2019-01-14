@@ -18,18 +18,19 @@ class BaseOperations(MetaOperations):
         :param op:
         :return:
         """
-        operation_name = op.replace('-', '_')
+        operation_name = op.replace("-", "_")
 
-        if operation_name == 'meta':
+        if operation_name == "meta":
             # This is only important because all resources have attribute meta
             # which will conflict with the `meta` operation and make it
             # impossible to dynamically call the operation
-            operation_name = 'meta_list'
+            operation_name = "meta_list"
 
         try:
             method = getattr(cls, operation_name)
         except Exception:
             raise AttributeError(
-                '{} is not a valid operation for this Resource'.format(op))
+                "{} is not a valid operation for this Resource".format(op)
+            )
 
         return method(data=data, key=key)
