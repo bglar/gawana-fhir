@@ -95,9 +95,8 @@ class Resource(CRUDMixin, ElementSerializer, Versioned, BaseOperations, db.Model
     def validate_references(self, reference, field_value):
         if reference and field_value:
             url_regex = (
-                "((http|https):\/\/([A-Za-z0-9\\\/\.\-\:\%\$])*)?("
-                + reference
-                + ")\/[A-Za-z0-9\-\.]{1,64}(\/_history\/[A-Za-z0-9\-\.]{1,64})?"
+                f"((http|https):\/\/([A-Za-z0-9\\\/\.\-\:\%\$])*)?({reference}"
+                ")\/[A-Za-z0-9\-\.]{1,64}(\/_history\/[A-Za-z0-9\-\.]{1,64})?"
             )
             pattern = re.compile(url_regex)
 
