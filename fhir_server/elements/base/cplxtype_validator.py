@@ -314,9 +314,8 @@ class CompositeValidator(object):
             validate_valuesets(val.code, get_url, 'signature code')
 
         if not (self.values.contentType in SIGNATURE_MIME_TYPES):
-            raise ValueError(
-                'The signature content type should be one of'
-                ' %s' % SIGNATURE_MIME_TYPES)
+            raise ValueError('The signature content type should be '
+                             f'one of {SIGNATURE_MIME_TYPES}')
 
         try:
             jwt.decode(self.values.blob, verify=False)
