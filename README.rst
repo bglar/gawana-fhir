@@ -8,7 +8,7 @@ FHIR_ is a standard for exchanging healthcare information electronically.
 The FHIR (pronounced "fire") standard uses basic building blocks called
 **resources** to model healthcare data in a way that is easier for healthcare
 providers to use and share clinical data as needed without compromising
-security or violating HIPAA (Health Insurance Portability and Accountability Act).
+secur.
 
 The specification for FHIR is created and maintained by
 HL7_ (Health Level 7) International, the organization responsible for the
